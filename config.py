@@ -73,19 +73,16 @@ class AppConfig:
     # Prompt Template
     PROMPT_TEMPLATE = """Create a stunning superhero avatar transformation:
 
-Subject: Person in the provided photo
-Style: {superhero} superhero costume and powers
-Color scheme: Primary color is {color}
-Vehicle: {car} featured prominently in the scene
-Setting: Epic superhero scene with dramatic lighting and effects
+Make the person in the provided photo a {superhero} superhero.
+In the background, have a {color} {car} featured prominently in the scene
+inside a garage that reads "Carmax Innovation Garage"
+The person should be in a superhero pose just outside the garage looking uber cool.
 
 Requirements:
 - Maintain the person's facial features and identity
-- Professional photography quality
 - Dramatic superhero pose
 - Cinematic composition
-- Ultra detailed, 8K resolution
-- Photorealistic rendering"""
+- Ultra detailed, 8K resolution"""
 
     # Event Configuration
     EVENT_NAME = os.getenv("EVENT_NAME", "Databricks @ Innovation Garage 2025")
