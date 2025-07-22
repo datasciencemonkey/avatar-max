@@ -111,19 +111,22 @@ class ImageGenerator:
             self.model_name,
             input={
                 "prompt": prompt,
-                "image": image_data,
-                "guidance_scale": 7.5,
-                "num_inference_steps": 50,
-                "strength": 0.8,  # How much to transform the original image
-                # seed parameter omitted - Replicate will handle randomization
+                "input_image": image_data,
+                "seed": -1,  # Use -1 for random seed
+                "aspect_ratio": "match_input_image",
+                "output_format": "png",
+                "safety_tolerance": 2,
+                "prompt_upsampling": False
             }
         )
         
-        # The output could be a URL or a list of URLs
-        if isinstance(output, list) and len(output) > 0:
-            return output[0]
+        # The output is a file object with .url() method
+        if output and hasattr(output, 'url'):
+            return output.url()
         elif isinstance(output, str):
             return output
+        elif isinstance(output, list) and len(output) > 0:
+            return output[0]
         else:
             return None
     
