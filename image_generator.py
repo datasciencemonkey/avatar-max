@@ -120,15 +120,30 @@ class ImageGenerator:
             }
         )
         
-        # The output is a file object with .url() method
-        if output and hasattr(output, 'url'):
-            return output.url()
-        elif isinstance(output, str):
-            return output
-        elif isinstance(output, list) and len(output) > 0:
-            return output[0]
-        else:
+        # Handle different Replicate API response formats
+        if output is None:
             return None
+        elif isinstance(output, str):
+            # Direct URL string
+            return output
+        elif hasattr(output, 'url'):
+            # File object with url method
+            if callable(getattr(output, 'url')):
+                return output.url()
+            else:
+                return output.url
+        elif isinstance(output, list) and len(output) > 0:
+            # List of URLs or objects - get the first one
+            first_item = output[0]
+            if isinstance(first_item, str):
+                return first_item
+            elif hasattr(first_item, 'url'):
+                if callable(getattr(first_item, 'url')):
+                    return first_item.url()
+                else:
+                    return first_item.url
+        
+        return None
     
     def _download_image(self, url: str) -> Image.Image:
         """Download image from URL.
