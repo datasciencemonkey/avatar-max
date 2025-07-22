@@ -282,7 +282,22 @@ div[class*="deploy"] {
     height: 40px;
     width: auto;
     background: white;
-    padding: 8px 12px;
+    padding: 8px 16px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: block;
+}
+
+/* Ensure SVG displays properly */
+a[href*="databricks.com"] {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    background: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    display: inline-block;
 }
