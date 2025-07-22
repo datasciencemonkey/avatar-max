@@ -190,8 +190,8 @@ def step_photo_capture():
         photo = st.camera_input("Take a photo")
         
         if photo is not None:
-            st.session_state.photo = photo
-            st.image(photo, caption="Your photo", use_column_width=True)
+            st.session_state.photo = Image.open(photo)
+            st.image(st.session_state.photo, caption="Your photo", use_column_width=True)
     
     with tab2:
         uploaded_file = st.file_uploader(
