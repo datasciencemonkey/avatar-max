@@ -365,9 +365,10 @@ def main():
     # Add Databricks logo in top right
     st.markdown(
         """<a href="https://www.databricks.com" target="_blank">
-            <img src="https://www.databricks.com/en-website-assets/static/e6b356d2819eb3cf1a5db9f2b5a49b99/databricks-logo.svg" 
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/63/Databricks_Logo.png" 
                  class="databricks-logo" 
-                 alt="Databricks">
+                 alt="Databricks"
+                 style="height: 40px; width: auto;">
         </a>""",
         unsafe_allow_html=True
     )

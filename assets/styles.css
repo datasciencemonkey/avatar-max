@@ -278,7 +278,11 @@ div[class*="deploy"] {
     position: fixed;
     top: 20px;
     right: 20px;
-    z-index: 999;
+    z-index: 9999;
     height: 40px;
     width: auto;
+    background: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
