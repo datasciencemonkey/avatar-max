@@ -115,7 +115,7 @@ class ImageGenerator:
                 "guidance_scale": 7.5,
                 "num_inference_steps": 50,
                 "strength": 0.8,  # How much to transform the original image
-                "seed": None,  # Random seed for variety
+                # seed parameter omitted - Replicate will handle randomization
             }
         )
         
