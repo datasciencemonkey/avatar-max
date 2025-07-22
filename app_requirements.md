@@ -87,8 +87,9 @@ Create a stunning superhero avatar of a person:
 ```
 
 #### AI Service Integration
-- Primary: OpenAI DALL-E 3 API
-- Fallback: Replicate (Stable Diffusion XL)
+- Primary: Replicate - black-forest-labs/flux-kontext-pro
+- Model: FLUX Kontext Pro (optimized for photo-realistic transformations)
+- API: Replicate API
 - Timeout: 60 seconds
 - Retry logic: 3 attempts with exponential backoff
 
@@ -157,8 +158,8 @@ CLUSTER_CONFIG = {
 ### Environment Variables
 ```bash
 # Required environment variables
-AI_API_KEY=your_openai_api_key
-AI_MODEL=dall-e-3
+REPLICATE_API_TOKEN=your_replicate_api_token
+AI_MODEL=black-forest-labs/flux-kontext-pro
 STORAGE_BUCKET=superhero-avatars
 STORAGE_REGION=us-east-1
 DATABASE_URL=postgresql://...
@@ -207,8 +208,9 @@ class AppConfig:
     PRIMARY_COLOR = "#FF6B6B"
     
     # AI Settings
-    AI_PROVIDER = "openai"  # or "replicate"
-    MODEL_VERSION = "dall-e-3"
+    AI_PROVIDER = "replicate"
+    MODEL_NAME = "black-forest-labs/flux-kontext-pro"
+    MODEL_VERSION = "latest"
     IMAGE_SIZE = "1024x1024"
     
     # Event Specific
@@ -241,7 +243,7 @@ class AppConfig:
   },
   "metadata": {
     "generation_time": 45.2,
-    "ai_model": "dall-e-3",
+    "ai_model": "black-forest-labs/flux-kontext-pro",
     "prompt_version": "v1.2"
   }
 }
