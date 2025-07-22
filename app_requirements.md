@@ -20,17 +20,11 @@ A Streamlit web application deployed on Databricks that creates personalized, AI
 
 #### User Preferences
 - **Favorite Car**
-  - Type: Dropdown selection
-  - Options: 
-    - Tesla Model S
-    - Ferrari 488
-    - Lamborghini Huracán
-    - Porsche 911
-    - BMW M5
-    - Mercedes AMG GT
-    - Audi R8
-    - McLaren 720S
-  - Default: None selected
+  - Type: Text input (free-form)
+  - Validation: Required, min 2 characters
+  - Placeholder: "Enter your favorite car (e.g., Tesla Model S, Ferrari 488)"
+  - Purpose: Allow users to enter any car name/model
+  - Examples: Tesla Model S, Ferrari 488, Lamborghini Huracán, classic cars, custom builds
 
 - **Favorite Color**
   - Type: Color picker or preset palette
