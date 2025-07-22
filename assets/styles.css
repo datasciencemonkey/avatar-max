@@ -5,6 +5,7 @@
     background: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
     color: #FFFFFF;
     min-height: 100vh;
+    padding-top: 20px;
 }
 
 /* Header styling */
@@ -239,17 +240,36 @@
     animation: diceRoll 0.5s ease-in-out;
 }
 
-/* Hide Streamlit deploy button */
+/* Hide Streamlit header and deploy button */
+header[data-testid="stHeader"] {
+    display: none !important;
+}
+
+/* Alternative selectors for deploy button */
 .stDeployButton {
+    display: none !important;
+}
+
+button[kind="header"] {
     display: none !important;
 }
 
 /* Hide the entire toolbar/menu */
 #MainMenu {
-    visibility: hidden;
+    visibility: hidden !important;
 }
 
 .stToolbar {
+    display: none !important;
+}
+
+/* Hide the header action buttons */
+[data-testid="stToolbar"] {
+    display: none !important;
+}
+
+/* Hide any deploy related elements */
+div[class*="deploy"] {
     display: none !important;
 }
 
