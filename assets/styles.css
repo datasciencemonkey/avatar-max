@@ -212,3 +212,29 @@
 .success-animation {
     animation: successPulse 2s;
 }
+
+/* Regenerate button special styling */
+.stButton > button[key="regenerate"] {
+    background: linear-gradient(45deg, #9B59B6, #8E44AD) !important;
+    font-size: 1.2rem !important;
+    padding: 15px 35px !important;
+    margin: 20px 0 !important;
+    box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+    transition: all 0.3s ease;
+}
+
+.stButton > button[key="regenerate"]:hover {
+    background: linear-gradient(45deg, #8E44AD, #7D3C98) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(155, 89, 182, 0.6);
+}
+
+/* Dice icon animation for regenerate button */
+@keyframes diceRoll {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.stButton > button[key="regenerate"]:active {
+    animation: diceRoll 0.5s ease-in-out;
+}

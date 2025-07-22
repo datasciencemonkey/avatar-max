@@ -315,7 +315,7 @@ def step_display_result():
         st.image(st.session_state.generated_avatar, use_container_width=True)
     
     # Show generation details
-    st.info(f"✨ Generated in {format_generation_time(st.session_state.generation_time)}")
+    st.info(f"✨ Generated in {format_generation_time(st.session_state.generation_time)} | Try regenerating for different variations!")
     
     # Download button
     if AppConfig.ENABLE_DOWNLOAD:
@@ -333,6 +333,13 @@ def step_display_result():
                 mime="image/png",
                 use_container_width=True
             )
+    
+    # Regenerate button with special styling
+    st.markdown("---")
+    if st.button("🎲 Regenerate Avatar", key="regenerate", use_container_width=True, type="primary"):
+        # Keep all data but go back to generation step
+        st.session_state.step = 4
+        st.rerun()
     
     # Action buttons
     col1, col2 = st.columns(2)
