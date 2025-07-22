@@ -191,7 +191,7 @@ def step_photo_capture():
         
         if photo is not None:
             st.session_state.photo = Image.open(photo)
-            st.image(st.session_state.photo, caption="Your photo", use_column_width=True)
+            st.image(st.session_state.photo, caption="Your photo", use_container_width=True)
     
     with tab2:
         uploaded_file = st.file_uploader(
@@ -202,7 +202,7 @@ def step_photo_capture():
         
         if uploaded_file is not None:
             st.session_state.photo = Image.open(uploaded_file)
-            st.image(st.session_state.photo, caption="Your photo", use_column_width=True)
+            st.image(st.session_state.photo, caption="Your photo", use_container_width=True)
     
     col1, col2 = st.columns(2)
     
@@ -315,11 +315,11 @@ def step_display_result():
     
     with col1:
         st.subheader("Original Photo")
-        st.image(st.session_state.photo, use_column_width=True)
+        st.image(st.session_state.photo, use_container_width=True)
     
     with col2:
         st.subheader("Superhero Avatar")
-        st.image(st.session_state.generated_avatar, use_column_width=True)
+        st.image(st.session_state.generated_avatar, use_container_width=True)
     
     # Show generation details
     st.info(f"✨ Generated in {format_generation_time(st.session_state.generation_time)}")
