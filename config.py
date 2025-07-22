@@ -88,7 +88,7 @@ Requirements:
 - Photorealistic rendering"""
 
     # Event Configuration
-    EVENT_NAME = os.getenv("EVENT_NAME", "Tech Conference 2024")
+    EVENT_NAME = os.getenv("EVENT_NAME", "Databricks @ Innovation Garage 2025")
     EVENT_THEME = os.getenv("EVENT_THEME", "futuristic city backdrop")
     
     # Storage Settings

@@ -387,7 +387,7 @@ def main():
     # Footer
     st.markdown("---")
     st.markdown(
-        f"<p style='text-align: center; color: #888;'>Built for {AppConfig.EVENT_NAME}</p>",
+        f"<p style='text-align: center; color: #888;'>{AppConfig.EVENT_NAME}</p>",
         unsafe_allow_html=True
     )
 
