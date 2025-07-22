@@ -1,0 +1,214 @@
+/* Superhero Avatar Generator - Custom Styles */
+
+/* Main container styling */
+.main {
+    background: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
+    color: #FFFFFF;
+    min-height: 100vh;
+}
+
+/* Header styling */
+.stTitle {
+    text-align: center;
+    font-size: 3rem !important;
+    background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 2rem;
+}
+
+/* Form styling */
+.stTextInput > div > div > input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    color: #FFFFFF;
+    padding: 10px 15px;
+}
+
+.stTextInput > div > div > input:focus {
+    border-color: #4ECDC4;
+    box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.3);
+}
+
+.stSelectbox > div > div > div {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+/* Button styling */
+.stButton > button {
+    background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+}
+
+/* Progress bar styling */
+.stProgress > div > div > div {
+    background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+}
+
+/* Image display styling */
+.avatar-container {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    margin: 20px 0;
+}
+
+/* Info/Warning/Error boxes */
+.stAlert {
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+/* Camera styling */
+.camera-container {
+    border: 3px solid #4ECDC4;
+    border-radius: 15px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    text-align: center;
+}
+
+/* Step indicator styling */
+.step-indicator {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.step {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 10px;
+    font-weight: bold;
+    position: relative;
+}
+
+.step.active {
+    background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+    color: white;
+}
+
+.step.completed {
+    background: #4ECDC4;
+    color: white;
+}
+
+.step-line {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    width: 100px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-50%);
+}
+
+/* Download button special styling */
+.download-button {
+    background: linear-gradient(45deg, #32CD32, #228B22) !important;
+}
+
+/* Hero section */
+.hero-section {
+    text-align: center;
+    padding: 50px 0;
+    background: radial-gradient(circle at center, rgba(78, 205, 196, 0.1) 0%, transparent 70%);
+}
+
+/* Animation keyframes */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .stTitle {
+        font-size: 2rem !important;
+    }
+    
+    .step-indicator {
+        flex-wrap: wrap;
+    }
+    
+    .stButton > button {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+}
+
+/* Color picker custom styling */
+.color-option {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    margin: 5px;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: 3px solid transparent;
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+    border-color: #FFFFFF;
+}
+
+.color-option.selected {
+    border-color: #4ECDC4;
+    box-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
+}
+
+/* Loading spinner override */
+.stSpinner > div {
+    border-color: #4ECDC4;
+}
+
+/* Success animation */
+@keyframes successPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(78, 205, 196, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 20px rgba(78, 205, 196, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(78, 205, 196, 0);
+    }
+}
+
+.success-animation {
+    animation: successPulse 2s;
+}
