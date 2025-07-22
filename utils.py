@@ -69,6 +69,24 @@ def validate_car_input(car: str) -> Tuple[bool, Optional[str]]:
     return True, None
 
 
+def validate_color_input(color: str) -> Tuple[bool, Optional[str]]:
+    """Validate color input.
+    
+    Args:
+        color: Color name
+        
+    Returns:
+        Tuple of (is_valid, error_message)
+    """
+    if not color or len(color.strip()) < 2:
+        return False, "Please enter a color name (at least 2 characters)"
+    
+    if len(color) > 50:
+        return False, "Color name must be less than 50 characters"
+    
+    return True, None
+
+
 def process_uploaded_image(image: Image.Image) -> Image.Image:
     """Process uploaded image for AI generation.
     

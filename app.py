@@ -15,6 +15,7 @@ from utils import (
     validate_name,
     validate_email_address,
     validate_car_input,
+    validate_color_input,
     save_image,
     generate_unique_filename,
     create_participant_record,
@@ -134,20 +135,11 @@ def step_preferences():
         )
     
     with col3:
-        color = st.selectbox(
+        color = st.text_input(
             "Favorite Color",
-            options=list(AppConfig.COLOR_OPTIONS.keys()),
-            index=None,
-            placeholder="Select a color"
+            value=st.session_state.form_data.get("color", ""),
+            placeholder="e.g., Red, Blue, Gold"
         )
-        
-        # Show color preview
-        if color:
-            st.markdown(
-                f"<div style='width: 50px; height: 50px; background-color: {AppConfig.COLOR_OPTIONS[color]}; "
-                f"border-radius: 50%; margin: 10px auto;'></div>",
-                unsafe_allow_html=True
-            )
     
     col1, col2 = st.columns(2)
     
@@ -165,10 +157,11 @@ def step_preferences():
                 show_error("Please enter your favorite car")
             else:
                 car_valid, car_error = validate_car_input(car)
+                color_valid, color_error = validate_color_input(color)
                 if not car_valid:
                     show_error(car_error)
-                elif not color:
-                    show_error("Please select a color")
+                elif not color_valid:
+                    show_error(color_error)
                 else:
                     st.session_state.form_data["superhero"] = superhero
                     st.session_state.form_data["car"] = car
