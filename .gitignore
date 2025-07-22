@@ -5,6 +5,42 @@ build/
 dist/
 wheels/
 *.egg-info
+.pytest_cache/
 
 # Virtual environments
 .venv
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Generated images
+data/avatars/
+data/originals/
+*.png
+*.jpg
+*.jpeg
+
+# Participant data
+data/*.csv
+data/*.json
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+
+# Streamlit
+.streamlit/secrets.toml
+
+# AWS
+.aws/
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
