@@ -39,6 +39,7 @@ class TestAppFunctions:
             assert mock_session_state['photo'] is None
             assert mock_session_state['generated_avatar'] is None
             assert mock_session_state['generation_time'] is None
+            assert mock_session_state['request_id'] is None
     
     @patch('pathlib.Path.exists')
     @patch('builtins.open', create=True)

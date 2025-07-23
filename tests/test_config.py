@@ -41,7 +41,7 @@ def test_prompt_generation():
     assert "Iron Man" in prompt
     assert "Red" in prompt
     assert "Tesla Model S" in prompt
-    assert "superhero costume" in prompt
+    assert "Carmax Innovation Garage" in prompt
 
 
 def test_directory_creation():
