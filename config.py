@@ -123,9 +123,16 @@ Requirements:
             raise ValueError("REPLICATE_API_TOKEN environment variable is required")
         
         # Create directories if they don't exist
-        cls.DATA_DIR.mkdir(exist_ok=True)
-        cls.AVATARS_DIR.mkdir(exist_ok=True)
-        cls.ORIGINALS_DIR.mkdir(exist_ok=True)
+        # For Databricks volumes, directories will be created when saving files
+        if not str(cls.DATA_DIR).startswith("/Volumes/"):
+            # Only create directories for local file system
+            cls.DATA_DIR.mkdir(exist_ok=True)
+            cls.AVATARS_DIR.mkdir(exist_ok=True)
+            cls.ORIGINALS_DIR.mkdir(exist_ok=True)
+        else:
+            # For Databricks volumes, just log that we'll create on write
+            print(f"Using Databricks volume: {cls.DATA_DIR}")
+            print("Directories will be created when saving files")
         
         return True
     
