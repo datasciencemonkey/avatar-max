@@ -1,4 +1,4 @@
-# >¸ Superhero Avatar Generator
+# Superhero Avatar Generator
 
 Transform your photos into personalized superhero avatars using AI! This Streamlit application uses Replicate's FLUX Kontext Pro model to create stunning superhero transformations.
 
@@ -25,6 +25,12 @@ Transform your photos into personalized superhero avatars using AI! This Streaml
    - Add your Replicate API token to `.env`:
    ```
    REPLICATE_API_TOKEN=your_token_here
+   ```
+   
+   - (Optional) For Databricks volume storage:
+   ```
+   DATABRICKS_HOST=https://your-workspace.databricks.com
+   DATABRICKS_TOKEN=your_databricks_token
    ```
 
 3. **Run the app**:

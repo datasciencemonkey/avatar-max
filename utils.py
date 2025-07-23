@@ -161,7 +161,7 @@ def save_image(image: Image.Image, directory: Path, filename: str) -> Path:
             print(f"Attempting to upload to Databricks volume: {filepath}")
             
             # Initialize Databricks client with timeout
-            w = WorkspaceClient()
+            w = WorkspaceClient(host=os.getenv("DATABRICKS_HOST"), token=os.getenv("DATABRICKS_TOKEN"))
             
             # Convert PIL Image to bytes
             buffer = BytesIO()
@@ -174,7 +174,17 @@ def save_image(image: Image.Image, directory: Path, filename: str) -> Path:
             
             print(f"Successfully uploaded image to Databricks volume: {volume_file_path}")
         except Exception as e:
-            print(f"Error uploading to Databricks volume: {e}")
+            error_msg = str(e)
+            print(f"Error uploading to Databricks volume: {error_msg}")
+            
+            # Provide helpful error messages
+            if "Invalid access token" in error_msg:
+                print("❌ Authentication failed - check your DATABRICKS_TOKEN")
+            elif "RESOURCE_DOES_NOT_EXIST" in error_msg:
+                print("❌ Volume path does not exist - ensure volume is created in Databricks")
+            elif "PERMISSION_DENIED" in error_msg:
+                print("❌ Permission denied - check volume access permissions")
+            
             # Fall back to local save if Databricks upload fails
             print("Falling back to local file system save")
             
@@ -186,7 +196,7 @@ def save_image(image: Image.Image, directory: Path, filename: str) -> Path:
             
             # Save locally
             image.save(local_filepath, format="PNG", optimize=True)
-            print(f"Saved locally to: {local_filepath}")
+            print(f"✅ Saved locally to: {local_filepath}")
             
             # Return the intended volume path for consistency
             return filepath
