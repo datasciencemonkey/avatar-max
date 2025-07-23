@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 
 from config import AppConfig
 from image_generator import ImageGenerator
+from database import db_manager
 from utils import (
     validate_name,
     validate_email_address,
@@ -58,6 +59,8 @@ def init_session_state():
         st.session_state.generated_avatar = None
     if "generation_time" not in st.session_state:
         st.session_state.generation_time = None
+    if "request_id" not in st.session_state:
+        st.session_state.request_id = None
 
 # Step indicator
 def show_step_indicator(current_step: int):
@@ -225,6 +228,29 @@ def step_generate_avatar():
         # Validate configuration
         AppConfig.validate()
         
+        # Create database request if not already created
+        if not st.session_state.request_id:
+            try:
+                st.session_state.request_id = db_manager.create_avatar_request(
+                    name=st.session_state.form_data["name"],
+                    email=st.session_state.form_data["email"],
+                    superhero=st.session_state.form_data["superhero"],
+                    car=st.session_state.form_data["car"],
+                    color=st.session_state.form_data["color"]
+                )
+                status_text.text("Request saved to database...")
+                progress_bar.progress(10)
+            except Exception as e:
+                print(f"Database error: {e}")
+                # Continue even if database fails
+        
+        # Update status to processing
+        if st.session_state.request_id:
+            try:
+                db_manager.update_request_processing(st.session_state.request_id)
+            except Exception as e:
+                print(f"Database update error: {e}")
+        
         # Initialize generator
         status_text.text("Initializing AI model...")
         progress_bar.progress(20)
@@ -245,6 +271,12 @@ def step_generate_avatar():
         
         if error:
             show_error(f"Generation failed: {error}")
+            # Update database with failure
+            if st.session_state.request_id:
+                try:
+                    db_manager.update_request_failed(st.session_state.request_id, error)
+                except Exception as e:
+                    print(f"Database update error: {e}")
             if st.button("← Try Again", use_container_width=True):
                 st.session_state.step = 3
                 st.rerun()
@@ -280,6 +312,18 @@ def step_generate_avatar():
                     avatar_path,
                     generation_time
                 )
+            
+            # Update database with success
+            if st.session_state.request_id:
+                try:
+                    db_manager.update_request_completed(
+                        st.session_state.request_id,
+                        generation_time,
+                        original_path,
+                        avatar_path
+                    )
+                except Exception as e:
+                    print(f"Database update error: {e}")
             
             progress_bar.progress(100)
             status_text.text("Complete!")

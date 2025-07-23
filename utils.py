@@ -244,7 +244,7 @@ def reset_session_state() -> None:
     keys_to_reset = [
         "name", "email", "superhero", "car", "color",
         "photo", "generated_avatar", "generation_time",
-        "step", "form_submitted"
+        "step", "form_submitted", "request_id"
     ]
     for key in keys_to_reset:
         if key in st.session_state:

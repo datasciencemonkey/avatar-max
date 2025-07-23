@@ -79,8 +79,8 @@ inside a garage that reads "Carmax Innovation Garage"
 The person should be in a superhero pose just outside the garage looking uber cool.
 
 Requirements:
-- Maintain the person's facial features and identity
-- Dramatic superhero pose
+- Maintain the person's facial features, color and identity
+- Uber cool superhero pose
 - Cinematic composition
 - Ultra detailed, 8K resolution"""
 
@@ -89,7 +89,15 @@ Requirements:
     EVENT_THEME = os.getenv("EVENT_THEME", "futuristic city backdrop")
     
     # Storage Settings
-    DATA_DIR = Path("data")
+    # Use Databricks volume if available, otherwise local storage
+    DATABRICKS_VOLUME = os.getenv("DATABRICKS_VOLUME", "/Volumes/main/sgfs/sg-vol/avatarmax")
+    USE_DATABRICKS_VOLUME = os.path.exists(DATABRICKS_VOLUME)
+    
+    if USE_DATABRICKS_VOLUME:
+        DATA_DIR = Path(DATABRICKS_VOLUME)
+    else:
+        DATA_DIR = Path("data")
+    
     AVATARS_DIR = DATA_DIR / "avatars"
     ORIGINALS_DIR = DATA_DIR / "originals"
     
