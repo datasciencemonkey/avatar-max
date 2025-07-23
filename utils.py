@@ -133,7 +133,7 @@ def generate_unique_filename(prefix: str = "avatar", extension: str = "png") -> 
 
 
 def save_image(image: Image.Image, directory: Path, filename: str) -> Path:
-    """Save image to disk.
+    """Save image to disk or Databricks volume.
     
     Args:
         image: PIL Image to save
@@ -143,9 +143,32 @@ def save_image(image: Image.Image, directory: Path, filename: str) -> Path:
     Returns:
         Path to saved file
     """
-    directory.mkdir(exist_ok=True, parents=True)
     filepath = directory / filename
-    image.save(filepath, format="PNG", optimize=True)
+    
+    # Check if we're writing to a Databricks volume
+    if str(directory).startswith("/Volumes/"):
+        # For Databricks volumes, we need to ensure parent directories exist
+        # and write the file directly
+        import os
+        
+        # Create parent directories if they don't exist
+        os.makedirs(directory, exist_ok=True)
+        
+        # Save image to Databricks volume
+        # Convert PIL Image to bytes
+        from io import BytesIO
+        buffer = BytesIO()
+        image.save(buffer, format="PNG", optimize=True)
+        buffer.seek(0)
+        
+        # Write bytes to volume
+        with open(filepath, 'wb') as f:
+            f.write(buffer.getvalue())
+    else:
+        # Local file system - use pathlib
+        directory.mkdir(exist_ok=True, parents=True)
+        image.save(filepath, format="PNG", optimize=True)
+    
     return filepath
 
 

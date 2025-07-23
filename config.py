@@ -91,7 +91,11 @@ Requirements:
     # Storage Settings
     # Use Databricks volume if available, otherwise local storage
     DATABRICKS_VOLUME = os.getenv("DATABRICKS_VOLUME", "/Volumes/main/sgfs/sg-vol/avatarmax")
-    USE_DATABRICKS_VOLUME = os.path.exists(DATABRICKS_VOLUME)
+    
+    # Check if we're in Databricks environment
+    # In Databricks, volumes are always accessible at /Volumes/
+    IS_DATABRICKS = os.path.exists("/Volumes/") or os.getenv("DATABRICKS_RUNTIME_VERSION") is not None
+    USE_DATABRICKS_VOLUME = IS_DATABRICKS or os.path.exists(DATABRICKS_VOLUME)
     
     if USE_DATABRICKS_VOLUME:
         DATA_DIR = Path(DATABRICKS_VOLUME)
