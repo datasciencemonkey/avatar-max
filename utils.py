@@ -147,23 +147,32 @@ def save_image(image: Image.Image, directory: Path, filename: str) -> Path:
     
     # Check if we're writing to a Databricks volume
     if str(directory).startswith("/Volumes/"):
-        # For Databricks volumes, we need to ensure parent directories exist
-        # and write the file directly
-        import os
-        
-        # Create parent directories if they don't exist
-        os.makedirs(directory, exist_ok=True)
-        
-        # Save image to Databricks volume
-        # Convert PIL Image to bytes
-        from io import BytesIO
-        buffer = BytesIO()
-        image.save(buffer, format="PNG", optimize=True)
-        buffer.seek(0)
-        
-        # Write bytes to volume
-        with open(filepath, 'wb') as f:
-            f.write(buffer.getvalue())
+        try:
+            # Use Databricks SDK to upload to volume
+            from databricks.sdk import WorkspaceClient
+            from io import BytesIO
+            
+            # Initialize Databricks client
+            w = WorkspaceClient()
+            
+            # Convert PIL Image to bytes
+            buffer = BytesIO()
+            image.save(buffer, format="PNG", optimize=True)
+            buffer.seek(0)
+            
+            # Upload to Databricks volume
+            volume_file_path = str(filepath)
+            w.files.upload(volume_file_path, buffer, overwrite=True)
+            
+            print(f"Successfully uploaded image to Databricks volume: {volume_file_path}")
+        except Exception as e:
+            print(f"Error uploading to Databricks volume: {e}")
+            # Fall back to local save if Databricks upload fails
+            import os
+            os.makedirs(directory, exist_ok=True)
+            with open(filepath, 'wb') as f:
+                buffer.seek(0)
+                f.write(buffer.getvalue())
     else:
         # Local file system - use pathlib
         directory.mkdir(exist_ok=True, parents=True)

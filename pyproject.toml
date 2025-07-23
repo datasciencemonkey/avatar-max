@@ -15,4 +15,10 @@ dependencies = [
     "boto3>=1.28.0",
     "psycopg2-binary>=2.9.10",
     "sqlalchemy>=2.0.41",
+    "databricks-sdk>=0.59.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
 ]
