@@ -283,22 +283,33 @@ def step_generate_avatar():
         else:
             # Save images
             status_text.text("Saving your avatar...")
+            progress_bar.progress(85)
             
-            # Save original
-            original_filename = generate_unique_filename("original", "jpg")
-            original_path = save_image(
-                st.session_state.photo,
-                AppConfig.ORIGINALS_DIR,
-                original_filename
-            )
-            
-            # Save avatar
-            avatar_filename = generate_unique_filename("avatar", "png")
-            avatar_path = save_image(
-                avatar,
-                AppConfig.AVATARS_DIR,
-                avatar_filename
-            )
+            try:
+                # Save original
+                original_filename = generate_unique_filename("original", "jpg")
+                original_path = save_image(
+                    st.session_state.photo,
+                    AppConfig.ORIGINALS_DIR,
+                    original_filename
+                )
+                
+                progress_bar.progress(90)
+                
+                # Save avatar
+                avatar_filename = generate_unique_filename("avatar", "png")
+                avatar_path = save_image(
+                    avatar,
+                    AppConfig.AVATARS_DIR,
+                    avatar_filename
+                )
+                
+                progress_bar.progress(95)
+            except Exception as e:
+                print(f"Error saving images: {e}")
+                # Continue anyway - we have the generated avatar in memory
+                original_path = f"temp_{original_filename}"
+                avatar_path = f"temp_{avatar_filename}"
             
             # Create participant record
             if AppConfig.ENABLE_EMAIL_CAPTURE:

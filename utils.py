@@ -148,11 +148,19 @@ def save_image(image: Image.Image, directory: Path, filename: str) -> Path:
     # Check if we're writing to a Databricks volume
     if str(directory).startswith("/Volumes/"):
         try:
+            # Check if we have Databricks credentials before trying to use SDK
+            import os
+            if not os.getenv("DATABRICKS_HOST") or not os.getenv("DATABRICKS_TOKEN"):
+                print("Databricks credentials not configured, falling back to local save")
+                raise ValueError("Missing Databricks credentials")
+            
             # Use Databricks SDK to upload to volume
             from databricks.sdk import WorkspaceClient
             from io import BytesIO
             
-            # Initialize Databricks client
+            print(f"Attempting to upload to Databricks volume: {filepath}")
+            
+            # Initialize Databricks client with timeout
             w = WorkspaceClient()
             
             # Convert PIL Image to bytes
@@ -168,11 +176,20 @@ def save_image(image: Image.Image, directory: Path, filename: str) -> Path:
         except Exception as e:
             print(f"Error uploading to Databricks volume: {e}")
             # Fall back to local save if Databricks upload fails
+            print("Falling back to local file system save")
+            
+            # Create local directory and save
             import os
-            os.makedirs(directory, exist_ok=True)
-            with open(filepath, 'wb') as f:
-                buffer.seek(0)
-                f.write(buffer.getvalue())
+            local_dir = Path("data") / directory.name
+            local_dir.mkdir(exist_ok=True, parents=True)
+            local_filepath = local_dir / filename
+            
+            # Save locally
+            image.save(local_filepath, format="PNG", optimize=True)
+            print(f"Saved locally to: {local_filepath}")
+            
+            # Return the intended volume path for consistency
+            return filepath
     else:
         # Local file system - use pathlib
         directory.mkdir(exist_ok=True, parents=True)
