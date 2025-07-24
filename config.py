@@ -71,19 +71,20 @@ class AppConfig:
     }
     
     # Prompt Template
-    PROMPT_TEMPLATE = """Create a professional superhero-themed portrait:
+    PROMPT_TEMPLATE = """Create a vibrant cartoon-style superhero portrait:
 
-Transform the person in the photo into a {superhero}-inspired character.
-Place them in front of a modern garage with "{car}" vehicle visible.
-Add {color} accents to the scene and costume.
-Include "Carmax Innovation Garage" signage in the background.
+Transform the person into a {superhero}-inspired animated character in Pixar/Disney animation style.
+Place them in front of a stylized cartoon garage with a {color} {car} vehicle.
+Include "Carmax Innovation Garage" signage in fun, bold lettering.
 
-Style requirements:
+Art style requirements:
+- Pixar/Disney 3D animation style with exaggerated features
+- Bright, saturated colors with {color} as the primary accent
+- Cartoon rendering with cel-shading and smooth gradients
 - Family-friendly superhero costume design
-- Professional portrait composition
-- Maintain person's facial features and identity
-- Bright, well-lit environment
-- High quality, detailed rendering"""
+- Maintain recognizable facial features in cartoon form
+- Dynamic superhero pose with energy and movement
+- Comic book inspired background elements"""
 
     # Event Configuration
     EVENT_NAME = os.getenv("EVENT_NAME", "Databricks @ Innovation Garage 2025")
