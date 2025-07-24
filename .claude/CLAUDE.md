@@ -123,3 +123,7 @@ The app supports feature flags via environment variables:
 - `ENABLE_EMAIL_CAPTURE`: Toggle email collection
 - `ENABLE_DOWNLOADS`: Control download functionality
 - `ENABLE_ANALYTICS`: Toggle analytics tracking
+
+
+## Bug Handling Workflow
+- When a bug is reported, always start by creating an issue on GitHub, then fix it and push code to remote git and close the issue

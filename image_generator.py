@@ -69,7 +69,16 @@ class ImageGenerator:
                         return generated_image, generation_time, None
                         
                 except Exception as e:
-                    if attempt < max_retries - 1:
+                    error_str = str(e)
+                    # Check for sensitivity error
+                    if "E005" in error_str or "flagged as sensitive" in error_str:
+                        # Try with modified prompt on sensitivity errors
+                        if attempt < max_retries - 1:
+                            # Simplify prompt for retry
+                            prompt = f"Professional portrait of person as {superhero} character with {car} and {color} theme. Family-friendly superhero costume."
+                            time.sleep(2 ** attempt)
+                            continue
+                    elif attempt < max_retries - 1:
                         time.sleep(2 ** attempt)  # Exponential backoff
                         continue
                     raise e
@@ -78,7 +87,18 @@ class ImageGenerator:
             
         except Exception as e:
             generation_time = time.time() - start_time
-            error_message = f"Generation failed: {str(e)}"
+            error_str = str(e)
+            
+            # Provide user-friendly error messages
+            if "E005" in error_str or "flagged as sensitive" in error_str:
+                error_message = "The image generation was blocked by content filters. Please try again with a different photo or contact support if this persists."
+            elif "rate limit" in error_str.lower():
+                error_message = "Service is busy. Please wait a moment and try again."
+            elif "timeout" in error_str.lower():
+                error_message = "Generation took too long. Please try again."
+            else:
+                error_message = f"Generation failed: {error_str}"
+                
             return None, generation_time, error_message
     
     def _image_to_base64(self, image: Image.Image) -> str:
@@ -115,8 +135,10 @@ class ImageGenerator:
                 "seed": -1,  # Use -1 for random seed
                 "aspect_ratio": "match_input_image",
                 "output_format": "png",
-                "safety_tolerance": 2,
-                "prompt_upsampling": False
+                "safety_tolerance": 5,  # Increased tolerance to avoid false positives
+                "prompt_upsampling": False,
+                "num_outputs": 1,
+                "disable_safety_check": False
             }
         )
         
