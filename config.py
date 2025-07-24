@@ -71,11 +71,8 @@ class AppConfig:
     }
 
     # Prompt Template
-    PROMPT_TEMPLATE = """Craft a pride‑beaming superhero inspired image in classic comic‑book style.
-– Subject: Turn the person into a {superhero}‑style character. Mirror {superhero}’s iconic costume elements, color patterns, and silhouette while keeping the face recognizably theirs. The hero should be beaming with pride (big confident smile, upright posture, shoulders back).
-– Setting: Place the hero before a stylized comic‑book garage with a {color} {car} posed heroically beside them. Add bold, fun lettering that reads “CarMax Innovation Garage.”
-– Pose & Composition: Dynamic hero stance (hands on hips or fist aloft), cape or hair flowing, eyes sparkling. Center the figure at eye level; dramatic perspective welcome.
-– Technical Notes: 4K resolution; avoid any text beyond “CarMax Innovation Garage”; family‑friendly and inclusive."""
+    PROMPT_TEMPLATE = """Move the person to a carmax garage, dressed like a {superhero} inspired character. Show a {color} {car} in the background. Add caption that reads "2025 Innovation Garage”.
+Make the entire image cartoon style; avoid any text beyond “Innovation Garage”; family‑friendly and inclusive."""
 
     # Event Configuration
     EVENT_NAME = os.getenv("EVENT_NAME", "Databricks @ Innovation Garage 2025")

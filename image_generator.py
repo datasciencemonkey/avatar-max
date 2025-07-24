@@ -12,6 +12,7 @@ from PIL import Image
 from config import AppConfig
 from utils import process_uploaded_image
 from quality_check import StyleConsistencyChecker
+from databricks_claude import get_claude_commentary
 
 
 class ImageGenerator:
@@ -68,19 +69,32 @@ class ImageGenerator:
                         # Download and return the generated image
                         generated_image = self._download_image(output)
                         
-                        # Quality check for style consistency (single check, no retry)
+                        # Get Claude commentary and quality score
                         try:
-                            passes_check, style_score, check_error = self.style_checker.check_image_style(generated_image)
-                            print(f"Style consistency score: {style_score:.2f}")
+                            claude_score, commentary = get_claude_commentary(
+                                generated_image, superhero, color, car
+                            )
+                            print(f"Claude quality score: {claude_score:.2f}")
+                            print(f"Commentary: {commentary}")
                             
-                            # Store metadata for future LLM-based commentary
-                            setattr(generated_image, 'style_score', style_score)
-                            setattr(generated_image, 'style_check_passed', passes_check)
-                            setattr(generated_image, 'style_check_message', check_error)
+                            # Store Claude's analysis
+                            setattr(generated_image, 'style_score', claude_score)
+                            setattr(generated_image, 'commentary', commentary)
+                            
+                            # Also run basic style check for comparison
+                            passes_check, basic_score, check_error = self.style_checker.check_image_style(generated_image)
+                            setattr(generated_image, 'basic_style_score', basic_score)
+                            
                         except Exception as e:
-                            print(f"Quality check error: {e}")
-                            # Continue without quality score if check fails
-                            setattr(generated_image, 'style_score', None)
+                            print(f"Claude commentary error: {e}")
+                            # Fallback to basic quality check
+                            try:
+                                passes_check, style_score, check_error = self.style_checker.check_image_style(generated_image)
+                                setattr(generated_image, 'style_score', style_score)
+                                setattr(generated_image, 'commentary', "Your superhero avatar is ready!")
+                            except:
+                                setattr(generated_image, 'style_score', None)
+                                setattr(generated_image, 'commentary', "Transformation complete!")
                         
                         generation_time = time.time() - start_time
                         return generated_image, generation_time, None
@@ -152,7 +166,7 @@ class ImageGenerator:
                 "seed": -1,  # Use -1 for random seed
                 "aspect_ratio": "match_input_image",
                 "output_format": "png",
-                "safety_tolerance": 4,  # Balanced tolerance to reduce false positives
+                "safety_tolerance": 2,  # Standard safety tolerance
                 "prompt_upsampling": False,
                 "num_outputs": 1,
                 "disable_safety_check": False

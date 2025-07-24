@@ -369,13 +369,23 @@ def step_display_result():
         st.subheader("Superhero Avatar")
         st.image(st.session_state.generated_avatar, use_container_width=True)
     
-    # Show generation details
+    # Show generation details and Claude's commentary
     style_score = getattr(st.session_state.generated_avatar, 'style_score', None)
+    commentary = getattr(st.session_state.generated_avatar, 'commentary', None)
+    
+    # Display Claude's fun commentary if available
+    if commentary:
+        st.success(f"🎭 {commentary}")
+    
+    # Show generation time and quality score
     if style_score is not None:
         quality_emoji = "🌟" if style_score >= 0.8 else "✨" if style_score >= 0.7 else "⭐"
-        st.info(f"{quality_emoji} Generated in {format_generation_time(st.session_state.generation_time)} | Style consistency: {style_score:.1%} | Try regenerating for different variations!")
+        st.info(f"{quality_emoji} Generated in {format_generation_time(st.session_state.generation_time)} | Quality score: {style_score:.1%}")
     else:
-        st.info(f"✨ Generated in {format_generation_time(st.session_state.generation_time)} | Try regenerating for different variations!")
+        st.info(f"✨ Generated in {format_generation_time(st.session_state.generation_time)}")
+    
+    # Regeneration tip
+    st.caption("💡 Try regenerating for different variations!")
     
     # Download button
     if AppConfig.ENABLE_DOWNLOAD:
