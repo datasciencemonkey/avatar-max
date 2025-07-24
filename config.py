@@ -26,10 +26,17 @@ class AppConfig:
     TEXT_COLOR = "#FFFFFF"
 
     # AI Model Settings
-    AI_PROVIDER = "replicate"
-    MODEL_NAME = "black-forest-labs/flux-kontext-max"
-    MODEL_VERSION = "latest"
+    AI_PROVIDER = os.getenv("AI_PROVIDER", "fal")  # Options: "fal" or "replicate"
+    
+    # Replicate settings
+    REPLICATE_MODEL_NAME = "black-forest-labs/flux-kontext-dev"
     REPLICATE_API_TOKEN = os.getenv("REPLICATE_API_TOKEN")
+    
+    # Fal AI settings
+    FAL_MODEL_NAME = "fal-ai/flux-pro/kontext"
+    FAL_API_KEY = os.getenv("FAL_KEY")
+    
+    MODEL_VERSION = "latest"
 
     # Image Settings
     IMAGE_SIZE = "1024x1024"
@@ -114,8 +121,12 @@ Make the entire image cartoon style; avoid any text beyond “Innovation Garag
     @classmethod
     def validate(cls) -> bool:
         """Validate required configuration."""
-        if not cls.REPLICATE_API_TOKEN:
-            raise ValueError("REPLICATE_API_TOKEN environment variable is required")
+        if cls.AI_PROVIDER == "replicate" and not cls.REPLICATE_API_TOKEN:
+            raise ValueError("REPLICATE_API_TOKEN environment variable is required for Replicate provider")
+        elif cls.AI_PROVIDER == "fal" and not cls.FAL_API_KEY:
+            raise ValueError("FAL_KEY environment variable is required for Fal provider")
+        elif cls.AI_PROVIDER not in ["replicate", "fal"]:
+            raise ValueError(f"Invalid AI_PROVIDER: {cls.AI_PROVIDER}. Must be 'replicate' or 'fal'")
 
         # Create directories if they don't exist
         # For Databricks volumes, directories will be created when saving files
