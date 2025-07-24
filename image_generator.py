@@ -152,7 +152,7 @@ class ImageGenerator:
                 "seed": -1,  # Use -1 for random seed
                 "aspect_ratio": "match_input_image",
                 "output_format": "png",
-                "safety_tolerance": 5,  # Increased tolerance to avoid false positives
+                "safety_tolerance": 4,  # Balanced tolerance to reduce false positives
                 "prompt_upsampling": False,
                 "num_outputs": 1,
                 "disable_safety_check": False
