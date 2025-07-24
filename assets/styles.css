@@ -273,19 +273,28 @@ div[class*="deploy"] {
     display: none !important;
 }
 
-/* Databricks logo positioning */
-.databricks-logo {
+/* Databricks text positioning */
+.databricks-text {
     position: fixed;
     top: 20px;
     right: 20px;
     z-index: 9999;
-    height: 40px;
-    width: auto;
+    font-size: 24px;
+    font-weight: bold;
+    color: #FF3621;
     background: white;
     padding: 8px 16px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     display: block;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.databricks-text:hover {
+    transform: scale(1.05);
+    color: #FF3621;
+    text-decoration: none;
 }
 
 /* Ensure SVG displays properly */
