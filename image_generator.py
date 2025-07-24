@@ -11,6 +11,7 @@ from PIL import Image
 
 from config import AppConfig
 from utils import process_uploaded_image
+from quality_check import StyleConsistencyChecker
 
 
 class ImageGenerator:
@@ -24,6 +25,7 @@ class ImageGenerator:
         # Initialize Replicate client
         self.client = replicate.Client(api_token=AppConfig.REPLICATE_API_TOKEN)
         self.model_name = AppConfig.MODEL_NAME
+        self.style_checker = StyleConsistencyChecker()
     
     def generate_avatar(
         self,
@@ -65,7 +67,24 @@ class ImageGenerator:
                     if output:
                         # Download and return the generated image
                         generated_image = self._download_image(output)
+                        
+                        # Quality check for style consistency
+                        passes_check, style_score, check_error = self.style_checker.check_image_style(generated_image)
+                        
+                        if not passes_check:
+                            print(f"Quality check failed (score: {style_score}): {check_error}")
+                            if attempt < max_retries - 1:
+                                # Enhance prompt for better cartoon style
+                                prompt = f"CARTOON STYLE ONLY: {prompt} Ensure ALL elements are animated/cartoon style with cel-shading."
+                                time.sleep(2 ** attempt)
+                                continue
+                            else:
+                                # Return image anyway on last attempt, but log the issue
+                                print(f"Returning image despite quality check failure (score: {style_score})")
+                        
                         generation_time = time.time() - start_time
+                        # Include style score in metadata
+                        setattr(generated_image, 'style_score', style_score)
                         return generated_image, generation_time, None
                         
                 except Exception as e:
