@@ -12,35 +12,35 @@ load_dotenv()
 
 class AppConfig:
     """Application configuration class."""
-    
+
     # App Branding
     APP_TITLE = "🦸 Superhero Avatar Generator"
     APP_ICON = "🦸"
     PAGE_ICON = "🦸‍♀️"
     APP_DESCRIPTION = "Transform yourself into your favorite superhero!"
-    
+
     # Theme Colors
     PRIMARY_COLOR = "#FF6B6B"
     SECONDARY_COLOR = "#4ECDC4"
     BACKGROUND_COLOR = "#1A1A2E"
     TEXT_COLOR = "#FFFFFF"
-    
+
     # AI Model Settings
     AI_PROVIDER = "replicate"
     MODEL_NAME = "black-forest-labs/flux-kontext-pro"
     MODEL_VERSION = "latest"
     REPLICATE_API_TOKEN = os.getenv("REPLICATE_API_TOKEN")
-    
+
     # Image Settings
     IMAGE_SIZE = "1024x1024"
     IMAGE_FORMAT = "png"
     MAX_FILE_SIZE_MB = 10
     ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
-    
+
     # Superhero Options
     SUPERHERO_OPTIONS = [
         "Superman",
-        "Batman", 
+        "Batman",
         "Wonder Woman",
         "Spider-Man",
         "Iron Man",
@@ -53,9 +53,9 @@ class AppConfig:
         "Black Widow",
         "Hulk",
         "Doctor Strange",
-        "Ant-Man"
+        "Ant-Man",
     ]
-    
+
     # Color Options (name, hex value)
     COLOR_OPTIONS = {
         "Red": "#FF0000",
@@ -67,63 +67,59 @@ class AppConfig:
         "Black": "#000000",
         "Orange": "#FFA500",
         "Pink": "#FFC0CB",
-        "Cyan": "#00FFFF"
+        "Cyan": "#00FFFF",
     }
-    
+
     # Prompt Template
-    PROMPT_TEMPLATE = """Create a vibrant cartoon-style superhero portrait:
-
-Transform the person into a {superhero}-inspired animated character in Pixar/Disney animation style.
-Place them in front of a stylized cartoon garage with a {color} {car} vehicle.
-Include "Carmax Innovation Garage" signage in fun, bold lettering.
-
-Art style requirements:
-- Pixar/Disney 3D animation style with exaggerated features
-- Bright, saturated colors with {color} as the primary accent
-- Cartoon rendering with cel-shading and smooth gradients
-- Family-friendly superhero costume design
-- Maintain recognizable facial features in cartoon form
-- Dynamic superhero pose with energy and movement
-- Comic book inspired background elements"""
+    PROMPT_TEMPLATE = """Craft a pride‑beaming superhero inspired image in classic comic‑book style.
+– Subject: Turn the person into a {superhero}‑style character. Mirror {superhero}’s iconic costume elements, color patterns, and silhouette while keeping the face recognizably theirs. The hero should be beaming with pride (big confident smile, upright posture, shoulders back).
+– Setting: Place the hero before a stylized comic‑book garage with a {color} {car} posed heroically beside them. Add bold, fun lettering that reads “CarMax Innovation Garage.”
+– Pose & Composition: Dynamic hero stance (hands on hips or fist aloft), cape or hair flowing, eyes sparkling. Center the figure at eye level; dramatic perspective welcome.
+– Technical Notes: 4K resolution; avoid any text beyond “CarMax Innovation Garage”; family‑friendly and inclusive."""
 
     # Event Configuration
     EVENT_NAME = os.getenv("EVENT_NAME", "Databricks @ Innovation Garage 2025")
     EVENT_THEME = os.getenv("EVENT_THEME", "futuristic city backdrop")
-    
+
     # Storage Settings
     # Use Databricks volume if available, otherwise local storage
-    DATABRICKS_VOLUME = os.getenv("DATABRICKS_VOLUME", "/Volumes/main/sgfs/sg-vol/avatarmax")
-    
+    DATABRICKS_VOLUME = os.getenv(
+        "DATABRICKS_VOLUME", "/Volumes/main/sgfs/sg-vol/avatarmax"
+    )
+
     # Check if we're in Databricks environment
     # In Databricks, volumes are always accessible at /Volumes/
-    IS_DATABRICKS = os.path.exists("/Volumes/") or os.getenv("DATABRICKS_RUNTIME_VERSION") is not None
+    IS_DATABRICKS = (
+        os.path.exists("/Volumes/")
+        or os.getenv("DATABRICKS_RUNTIME_VERSION") is not None
+    )
     USE_DATABRICKS_VOLUME = IS_DATABRICKS or os.path.exists(DATABRICKS_VOLUME)
-    
+
     if USE_DATABRICKS_VOLUME:
         DATA_DIR = Path(DATABRICKS_VOLUME)
     else:
         DATA_DIR = Path("data")
-    
+
     AVATARS_DIR = DATA_DIR / "avatars"
     ORIGINALS_DIR = DATA_DIR / "originals"
-    
+
     # Session Settings
     SESSION_TIMEOUT_MINUTES = 30
     MAX_RETRIES = 3
     GENERATION_TIMEOUT_SECONDS = 60
-    
+
     # Feature Flags
     ENABLE_EMAIL_CAPTURE = True
     ENABLE_DOWNLOAD = True
     ENABLE_ANALYTICS = False
     REQUIRE_CONSENT = True
-    
+
     @classmethod
     def validate(cls) -> bool:
         """Validate required configuration."""
         if not cls.REPLICATE_API_TOKEN:
             raise ValueError("REPLICATE_API_TOKEN environment variable is required")
-        
+
         # Create directories if they don't exist
         # For Databricks volumes, directories will be created when saving files
         if not str(cls.DATA_DIR).startswith("/Volumes/"):
@@ -135,14 +131,10 @@ Art style requirements:
             # For Databricks volumes, just log that we'll create on write
             print(f"Using Databricks volume: {cls.DATA_DIR}")
             print("Directories will be created when saving files")
-        
+
         return True
-    
+
     @classmethod
     def get_prompt(cls, superhero: str, color: str, car: str) -> str:
         """Generate prompt with user selections."""
-        return cls.PROMPT_TEMPLATE.format(
-            superhero=superhero,
-            color=color,
-            car=car
-        )
+        return cls.PROMPT_TEMPLATE.format(superhero=superhero, color=color, car=car)

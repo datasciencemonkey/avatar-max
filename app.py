@@ -371,9 +371,11 @@ def step_display_result():
     
     # Show generation details
     style_score = getattr(st.session_state.generated_avatar, 'style_score', None)
-    if style_score:
+    if style_score is not None:
         quality_emoji = "🌟" if style_score >= 0.8 else "✨" if style_score >= 0.7 else "⭐"
         st.info(f"{quality_emoji} Generated in {format_generation_time(st.session_state.generation_time)} | Style consistency: {style_score:.1%} | Try regenerating for different variations!")
+    else:
+        st.info(f"✨ Generated in {format_generation_time(st.session_state.generation_time)} | Try regenerating for different variations!")
     
     # Download button
     if AppConfig.ENABLE_DOWNLOAD:

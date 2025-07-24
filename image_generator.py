@@ -68,23 +68,21 @@ class ImageGenerator:
                         # Download and return the generated image
                         generated_image = self._download_image(output)
                         
-                        # Quality check for style consistency
-                        passes_check, style_score, check_error = self.style_checker.check_image_style(generated_image)
-                        
-                        if not passes_check:
-                            print(f"Quality check failed (score: {style_score}): {check_error}")
-                            if attempt < max_retries - 1:
-                                # Enhance prompt for better cartoon style
-                                prompt = f"CARTOON STYLE ONLY: {prompt} Ensure ALL elements are animated/cartoon style with cel-shading."
-                                time.sleep(2 ** attempt)
-                                continue
-                            else:
-                                # Return image anyway on last attempt, but log the issue
-                                print(f"Returning image despite quality check failure (score: {style_score})")
+                        # Quality check for style consistency (single check, no retry)
+                        try:
+                            passes_check, style_score, check_error = self.style_checker.check_image_style(generated_image)
+                            print(f"Style consistency score: {style_score:.2f}")
+                            
+                            # Store metadata for future LLM-based commentary
+                            setattr(generated_image, 'style_score', style_score)
+                            setattr(generated_image, 'style_check_passed', passes_check)
+                            setattr(generated_image, 'style_check_message', check_error)
+                        except Exception as e:
+                            print(f"Quality check error: {e}")
+                            # Continue without quality score if check fails
+                            setattr(generated_image, 'style_score', None)
                         
                         generation_time = time.time() - start_time
-                        # Include style score in metadata
-                        setattr(generated_image, 'style_score', style_score)
                         return generated_image, generation_time, None
                         
                 except Exception as e:
