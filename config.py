@@ -27,7 +27,7 @@ class AppConfig:
 
     # AI Model Settings
     AI_PROVIDER = "replicate"
-    MODEL_NAME = "black-forest-labs/flux-kontext-pro"
+    MODEL_NAME = "black-forest-labs/flux-kontext-dev"
     MODEL_VERSION = "latest"
     REPLICATE_API_TOKEN = os.getenv("REPLICATE_API_TOKEN")
 
