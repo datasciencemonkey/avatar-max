@@ -10,8 +10,9 @@ from config import AppConfig
 def test_app_config_basics():
     """Test basic configuration values."""
     assert AppConfig.APP_TITLE == "🦸 Superhero Avatar Generator"
-    assert AppConfig.AI_PROVIDER == "replicate"
-    assert AppConfig.MODEL_NAME == "black-forest-labs/flux-kontext-pro"
+    assert AppConfig.AI_PROVIDER in ["replicate", "fal"]
+    assert AppConfig.REPLICATE_MODEL_NAME == "black-forest-labs/flux-kontext-dev"
+    assert AppConfig.FAL_MODEL_NAME == "fal-ai/flux-pro/kontext"
     assert AppConfig.IMAGE_SIZE == "1024x1024"
 
 
@@ -73,14 +74,17 @@ def test_directory_creation():
 
 def test_validation_fails_without_token():
     """Test validation fails without API token."""
-    # Remove token if it exists
+    # Remove tokens if they exist
     if "REPLICATE_API_TOKEN" in os.environ:
         del os.environ["REPLICATE_API_TOKEN"]
+    if "FAL_KEY" in os.environ:
+        del os.environ["FAL_KEY"]
     
     # Reload config to pick up missing token
     from importlib import reload
     import config
     reload(config)
     
-    with pytest.raises(ValueError, match="REPLICATE_API_TOKEN"):
+    # Should fail for the configured provider
+    with pytest.raises(ValueError):
         config.AppConfig.validate()
