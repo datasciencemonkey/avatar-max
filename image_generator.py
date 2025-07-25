@@ -50,7 +50,7 @@ class ReplicateImageGenerator:
                 "aspect_ratio": "match_input_image",
                 "output_format": "png",
                 "safety_tolerance": 2,
-                "prompt_upsampling": False,
+                "prompt_upsampling": True,
                 "num_outputs": 1,
                 "disable_safety_check": False
             }
