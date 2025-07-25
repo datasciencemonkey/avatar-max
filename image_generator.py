@@ -222,6 +222,21 @@ class ImageGenerator:
             except Exception as e:
                 print(f"Warning: Could not add Databricks logo overlay: {e}")
             
+            # Add Innovation Garage logo overlay
+            try:
+                innovation_garage_logo_path = Path("assets/innovation_garage.png")
+                generated_image = add_logo_to_image(
+                    generated_image,
+                    logo_path=innovation_garage_logo_path,
+                    position="top-right",
+                    size_ratio=0.18,  # 18% of image width
+                    padding=20,
+                    opacity=0.85
+                )
+                print("Added Innovation Garage logo overlay")
+            except Exception as e:
+                print(f"Warning: Could not add Innovation Garage logo overlay: {e}")
+            
             generation_time = time.time() - start_time
             return generated_image, generation_time, None
             
