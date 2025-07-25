@@ -280,15 +280,11 @@ div[class*="deploy"] {
     right: 20px;
     z-index: 9999;
     display: block;
-    background: white;
-    padding: 8px 12px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
 }
 
 .databricks-logo {
-    height: 30px;
+    height: 35px;
     width: auto;
     display: block;
 }
