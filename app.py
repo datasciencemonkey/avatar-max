@@ -435,7 +435,7 @@ def main():
     # Add Databricks logo in top right
     # Read and encode the logo image
     try:
-        with open("assets/databricks-logo.png", "rb") as f:
+        with open("assets/Databricks-Logo.png", "rb") as f:
             logo_data = f.read()
         import base64
         logo_base64 = base64.b64encode(logo_data).decode()
