@@ -14,6 +14,7 @@ from utils import process_uploaded_image
 from quality_check import StyleConsistencyChecker
 from databricks_claude import get_claude_commentary
 from fal_service import FalImageGenerator
+from logo_overlay import add_logo_to_image
 
 
 class ReplicateImageGenerator:
@@ -191,6 +192,19 @@ class ImageGenerator:
                 except:
                     setattr(generated_image, 'style_score', None)
                     setattr(generated_image, 'commentary', "Transformation complete!")
+            
+            # Add CarMax logo overlay
+            try:
+                generated_image = add_logo_to_image(
+                    generated_image,
+                    position="bottom-right",
+                    size_ratio=0.12,  # 12% of image width
+                    padding=15,
+                    opacity=0.85
+                )
+                print("Added CarMax logo overlay")
+            except Exception as e:
+                print(f"Warning: Could not add logo overlay: {e}")
             
             generation_time = time.time() - start_time
             return generated_image, generation_time, None

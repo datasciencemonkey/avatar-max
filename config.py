@@ -29,7 +29,7 @@ class AppConfig:
     AI_PROVIDER = os.getenv("AI_PROVIDER", "fal")  # Options: "fal" or "replicate"
     
     # Replicate settings
-    REPLICATE_MODEL_NAME = "black-forest-labs/flux-kontext-dev"
+    REPLICATE_MODEL_NAME = "black-forest-labs/flux-kontext-pro"
     REPLICATE_API_TOKEN = os.getenv("REPLICATE_API_TOKEN")
     
     # Fal AI settings
@@ -78,8 +78,8 @@ class AppConfig:
     }
 
     # Prompt Template
-    PROMPT_TEMPLATE = """Move the person to a carmax garage, dressed like a {superhero} inspired character. Show a {color} {car} in the background. Add caption that reads "2025 Innovation Garage”.
-Make the entire image cartoon style; avoid any text beyond “Innovation Garage”; family‑friendly and inclusive."""
+    PROMPT_TEMPLATE = """90s Cartoon themed image of the person in a {superhero}-inspired costume, striking a confident, playful power pose in front of a garage while looking at the camera.
+    Cartoonize everything and ensure the face closely resembles the person's face. Behind them: a {color} {car} and a single sign reading ‘Innovation Garage’. No other text"""
 
     # Event Configuration
     EVENT_NAME = os.getenv("EVENT_NAME", "Databricks @ Innovation Garage 2025")
