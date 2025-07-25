@@ -2,128 +2,95 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Workflow Practices
+- Always start feature requests by creating a Github issue as datasciencemonkey@gmail.com.
+
+## Project Overview
+
+Superhero Avatar Generator - A Streamlit web application that transforms user photos into personalized superhero avatars using AI image generation services (Fal AI or Replicate).
+
 ## Development Commands
 
-### Package Management
 ```bash
 # Install dependencies
 uv sync
 
-# Add new dependency
-uv add package_name
-
-# Run application
+# Run the application
 uv run streamlit run app.py
 
 # Run tests
 uv run pytest
 
-# Run specific test file
-uv run pytest tests/test_app.py
+# Run a specific test file
+uv run pytest tests/test_utils.py
 
-# Run specific test
-uv run pytest tests/test_utils.py::test_validate_name
+# Add new dependencies
+uv add package_name
+
+# Add development dependencies
+uv add --group dev package_name
 ```
 
-### Environment Setup
-```bash
-# Copy environment template (if .env.example exists)
-cp .env.example .env
+## High-Level Architecture
 
-# Required environment variable
-REPLICATE_API_TOKEN=your_token_here
-```
+### Core Application Flow
+1. **app.py** - Main Streamlit application implementing a 5-step wizard:
+   - Step 1: Personal info collection (name, email)
+   - Step 2: Preferences (superhero, car, color)
+   - Step 3: Photo capture/upload
+   - Step 4: AI generation
+   - Step 5: Result display and download
 
-## Code Architecture
+### Key Modules
+- **config.py** - Central configuration for AI providers, superhero options, storage settings
+- **image_generator.py** - Orchestrates AI image generation (supports Fal and Replicate)
+- **database.py** - PostgreSQL integration via SQLAlchemy for tracking generation requests
+- **utils.py** - Validation, image processing, session management utilities
+- **fal_service.py** - Fal AI integration (FLUX Kontext Pro model)
+- **databricks_claude.py** - Quality scoring using Databricks-hosted Claude
 
-### Core Application Structure
-This is a **Streamlit-based AI avatar generator** with a modular architecture:
+### AI Provider Architecture
+The application supports two AI providers with a unified interface:
+- **Fal AI** (preferred): Direct integration via fal-client
+- **Replicate**: Fallback option via replicate API
 
-- **app.py**: Main Streamlit application with 5-step wizard interface using session state management
-- **config.py**: Centralized configuration class (AppConfig) containing all app settings, AI model parameters, and feature flags
-- **image_generator.py**: AI image generation service using Replicate's FLUX Kontext Pro model
-- **utils.py**: Validation functions, image processing utilities, and Streamlit UI helpers
+Provider selection is controlled by `AI_PROVIDER` environment variable.
 
-### Key Architectural Patterns
+### Storage Architecture
+Dual storage support:
+- **Local**: Files stored in `data/originals/` and `data/avatars/`
+- **Databricks Volumes**: When `USE_DATABRICKS_VOLUME=true`, stores in Unity Catalog volumes
 
-**Multi-Step Form Flow**: The app uses Streamlit's session state to manage a 5-step wizard:
-1. Personal information collection
-2. Preference selection (superhero, car, color)
-3. Photo capture/upload
-4. AI generation processing
-5. Result display and download
+### Database Schema
+PostgreSQL database tracks:
+- Avatar generation requests
+- User information
+- Generated image paths
+- Quality scores
+- Timestamps
 
-**Configuration Management**: All settings are centralized in `AppConfig` class including:
-- AI model parameters (guidance_scale, num_inference_steps, etc.)
-- UI theming and branding
-- Feature flags for email capture, downloads, analytics
-- Superhero/color/car option lists
+## Environment Variables
 
-**Image Processing Pipeline**: 
-- Input validation and preprocessing in `utils.py`
-- AI generation with retry logic in `image_generator.py`
-- Base64 encoding/decoding for Streamlit integration
-- Automatic image resizing and format conversion
+Key environment variables to configure:
+- `REPLICATE_API_TOKEN` - For Replicate API access
+- `FAL_KEY` - For Fal AI access
+- `AI_PROVIDER` - Choose 'fal' or 'replicate'
+- `USE_DATABRICKS_VOLUME` - Enable Databricks storage
+- `DATABRICKS_HOST` / `DATABRICKS_TOKEN` - For Databricks integration
+- `POSTGRES_*` - Database connection settings
 
-**Data Storage Structure**:
-- `data/originals/`: User uploaded photos
-- `data/avatars/`: AI-generated superhero avatars
-- Unique filename generation with timestamp and hash
+## Testing Approach
 
-### Session State Management
-Critical session state variables:
-- `step`: Current wizard step (1-5)
-- `name`, `email`: User information
-- `superhero`, `car`, `color`: User preferences
-- `photo`: Uploaded/captured image
-- `generated_avatar`: AI result
+Tests are located in the `tests/` directory and use pytest. Key test files:
+- `test_utils.py` - Validation and utility function tests
+- `test_image_generator.py` - AI generation logic tests
+- `test_app.py` - Streamlit application flow tests
+- `test_fal_integration.py` - Fal AI integration tests
 
-### AI Integration Architecture
-Uses Replicate API with sophisticated prompt engineering:
-- Template-based prompt construction in `config.py`
-- Context injection combining user photo and preferences
-- Exponential backoff retry logic for reliability
-- Generation time tracking and user feedback
+## Important Considerations
 
-### Testing Structure
-Comprehensive test coverage with mocked external dependencies:
-- `tests/test_app.py`: Streamlit app logic testing
-- `tests/test_config.py`: Configuration validation
-- `tests/test_image_generator.py`: AI generation mocking
-- `tests/test_utils.py`: Utility function validation
-
-### Custom Styling
-`assets/styles.css` provides superhero-themed dark UI with:
-- Gradient backgrounds and animations
-- Step indicator progress styling
-- Mobile responsive design
-- Custom button and form styling
-
-## Important Implementation Notes
-
-### Replicate API Integration
-The application specifically uses `black-forest-labs/flux-kontext-pro` model. When modifying AI generation:
-- Prompts are constructed in `config.py` using the `PROMPT_TEMPLATE`
-- Image inputs must be base64 encoded
-- Generation parameters are configurable via `AppConfig`
-
-### File Management
-- All file operations use `pathlib.Path` for cross-platform compatibility
-- Unique filenames include timestamp and content hash
-- Images are automatically resized to optimize AI processing
-
-### Session State Persistence
-When adding new form steps or data:
-- Initialize new variables in `init_session_state()` in app.py
-- Use helper functions from `utils.py` for consistent UI messaging
-- Maintain the step-based navigation pattern
-
-### Environment Configuration
-The app supports feature flags via environment variables:
-- `ENABLE_EMAIL_CAPTURE`: Toggle email collection
-- `ENABLE_DOWNLOADS`: Control download functionality
-- `ENABLE_ANALYTICS`: Toggle analytics tracking
-
-
-## Bug Handling Workflow
-- When a bug is reported, always start by creating an issue on GitHub, then fix it and push code to remote git and close the issue
+1. **AI Model**: Uses FLUX Kontext Pro model for high-quality superhero transformations
+2. **Image Processing**: All uploaded images are preprocessed to ensure compatibility
+3. **Session State**: Streamlit session state manages multi-step wizard flow
+4. **Error Handling**: Comprehensive validation at each step with user-friendly error messages
+5. **Production Features**: Includes database persistence, quality scoring, and enterprise storage options

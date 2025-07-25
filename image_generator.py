@@ -206,6 +206,22 @@ class ImageGenerator:
             except Exception as e:
                 print(f"Warning: Could not add logo overlay: {e}")
             
+            # Add Databricks logo overlay
+            try:
+                from pathlib import Path
+                databricks_logo_path = Path("assets/Databricks-Logo.png")
+                generated_image = add_logo_to_image(
+                    generated_image,
+                    logo_path=databricks_logo_path,
+                    position="bottom-left",
+                    size_ratio=0.15,  # 15% of image width
+                    padding=20,
+                    opacity=0.9
+                )
+                print("Added Databricks logo overlay")
+            except Exception as e:
+                print(f"Warning: Could not add Databricks logo overlay: {e}")
+            
             generation_time = time.time() - start_time
             return generated_image, generation_time, None
             
