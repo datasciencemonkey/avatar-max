@@ -240,9 +240,10 @@
     animation: diceRoll 0.5s ease-in-out;
 }
 
-/* Hide Streamlit header and deploy button */
+/* Style Streamlit header to be minimal but keep sidebar toggle */
 header[data-testid="stHeader"] {
-    display: none !important;
+    background-color: transparent !important;
+    height: 3rem !important;
 }
 
 /* Alternative selectors for deploy button */
@@ -250,9 +251,7 @@ header[data-testid="stHeader"] {
     display: none !important;
 }
 
-button[kind="header"] {
-    display: none !important;
-}
+/* Keep sidebar toggle visible */
 
 /* Hide the entire toolbar/menu */
 #MainMenu {
@@ -271,6 +270,19 @@ button[kind="header"] {
 /* Hide any deploy related elements */
 div[class*="deploy"] {
     display: none !important;
+}
+
+/* Make sidebar toggle arrow more visible */
+button[kind="header"] {
+    display: block !important;
+    background-color: #262730 !important;
+    border: 1px solid #3A3A4A !important;
+}
+
+/* Sidebar toggle button styling */
+.css-1rs6os.edgvbvh3 {
+    visibility: visible !important;
+    background-color: #262730 !important;
 }
 
 /* Sidebar styling - matching dark theme */
