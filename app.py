@@ -558,6 +558,9 @@ def main():
     # Initialize session state
     init_session_state()
     
+    # Add settings button container at the bottom
+    settings_container = st.container()
+    
     # Sidebar for model and service selection
     with st.sidebar:
         st.markdown("### ⚙️ Configuration")
@@ -647,6 +650,37 @@ def main():
         f"<p style='text-align: center; color: #888;'>{AppConfig.EVENT_NAME}</p>",
         unsafe_allow_html=True
     )
+    
+    # Settings button at bottom right with container
+    with settings_container:
+        st.markdown("""
+            <style>
+            div[data-testid="stHorizontalBlock"]:has(button[key="settings_float"]) {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: none;
+                z-index: 999;
+            }
+            button[key="settings_float"] {
+                background-color: #262730;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                padding: 0;
+                font-size: 24px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            }
+            button[key="settings_float"]:hover {
+                background-color: #3A3A4A;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+        
+        col1, col2, col3 = st.columns([10, 1, 1])
+        with col3:
+            if st.button("⚙️", key="settings_float", help="Open settings sidebar (or use the arrow at top left)"):
+                st.info("👈 Click the arrow at the top left to open the settings sidebar")
 
 
 if __name__ == "__main__":
