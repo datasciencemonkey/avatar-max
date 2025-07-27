@@ -35,7 +35,7 @@ st.set_page_config(
     page_title=AppConfig.APP_TITLE,
     page_icon=AppConfig.PAGE_ICON,
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 # Load custom CSS
@@ -61,6 +61,11 @@ def init_session_state():
         st.session_state.generation_time = None
     if "request_id" not in st.session_state:
         st.session_state.request_id = None
+    # Model and service selection
+    if "selected_model" not in st.session_state:
+        st.session_state.selected_model = "Flux Context Pro"  # Default
+    if "selected_service" not in st.session_state:
+        st.session_state.selected_service = "Replicate"  # Default
 
 # Step indicator
 def show_step_indicator(current_step: int):
@@ -251,10 +256,13 @@ def step_generate_avatar():
             except Exception as e:
                 print(f"Database update error: {e}")
         
-        # Initialize generator
+        # Initialize generator with selected model and service
         status_text.text("Initializing AI model...")
         progress_bar.progress(20)
-        generator = ImageGenerator()
+        generator = ImageGenerator(
+            provider=st.session_state.selected_service,
+            model=st.session_state.selected_model
+        )
         
         # Generate avatar
         status_text.text("Transforming you into a superhero...")
@@ -549,6 +557,63 @@ def main():
     
     # Initialize session state
     init_session_state()
+    
+    # Sidebar for model and service selection
+    with st.sidebar:
+        st.markdown("### ⚙️ Configuration")
+        st.markdown("---")
+        
+        # Model selection
+        st.markdown("#### 🤖 AI Model")
+        model_options = ["Flux Context Dev", "Flux Context Pro", "Flux Context Max"]
+        selected_model = st.selectbox(
+            "Choose Model",
+            model_options,
+            index=model_options.index(st.session_state.selected_model),
+            key="model_selector",
+            help="Select the AI model for avatar generation"
+        )
+        
+        if selected_model != st.session_state.selected_model:
+            st.session_state.selected_model = selected_model
+        
+        # Service selection
+        st.markdown("#### 🌐 Service Provider")
+        service_options = ["Replicate", "Fal"]
+        selected_service = st.selectbox(
+            "Choose Service",
+            service_options,
+            index=service_options.index(st.session_state.selected_service),
+            key="service_selector",
+            help="Select the service provider for AI processing"
+        )
+        
+        if selected_service != st.session_state.selected_service:
+            st.session_state.selected_service = selected_service
+        
+        # Display current selection
+        st.markdown("---")
+        st.markdown("#### 📊 Current Selection")
+        st.info(f"**Model:** {st.session_state.selected_model}\n\n**Service:** {st.session_state.selected_service}")
+        
+        # Add information about the models
+        with st.expander("ℹ️ Model Information"):
+            st.markdown("""
+            **Flux Context Dev**
+            - Development version
+            - Faster processing
+            - Good for testing
+            
+            **Flux Context Pro**
+            - Production quality
+            - Balanced speed and quality
+            - Recommended for most users
+            
+            **Flux Context Max**
+            - Maximum quality
+            - Slower processing
+            - Best results
+            """)
     
     # Header
     st.markdown(

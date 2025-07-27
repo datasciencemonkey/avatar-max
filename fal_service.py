@@ -16,8 +16,12 @@ load_dotenv()
 class FalImageGenerator:
     """Handles AI image generation using Fal AI."""
     
-    def __init__(self):
-        """Initialize the Fal image generator."""
+    def __init__(self, model: str = "Flux Context Pro"):
+        """Initialize the Fal image generator.
+        
+        Args:
+            model: Model name to use
+        """
         self.api_key = os.getenv("FAL_KEY")
         if not self.api_key:
             raise ValueError("FAL_KEY is required for Fal AI service")
@@ -25,8 +29,14 @@ class FalImageGenerator:
         # Initialize Fal client
         fal_client.api_key = self.api_key
         
-        # Fal model endpoint for FLUX Kontext
-        self.model_name = "fal-ai/flux-pro/kontext"
+        # Import config to get model mappings
+        from config import AppConfig
+        
+        # Get the appropriate model name from config
+        self.model_name = AppConfig.MODEL_MAPPINGS.get("Fal", {}).get(
+            model,
+            "fal-ai/flux-pro/kontext"  # Default fallback
+        )
     
     def generate_avatar(
         self,

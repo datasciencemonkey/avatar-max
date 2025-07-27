@@ -273,6 +273,44 @@ div[class*="deploy"] {
     display: none !important;
 }
 
+/* Sidebar styling */
+.css-1d391kg {  /* Sidebar container */
+    background-color: #f8f9fa;
+    padding-top: 2rem;
+}
+
+[data-testid="stSidebar"] {
+    background-color: #f8f9fa;
+}
+
+[data-testid="stSidebar"] h3 {
+    color: #FF6B6B;
+    font-weight: 600;
+}
+
+[data-testid="stSidebar"] h4 {
+    color: #333;
+    font-weight: 500;
+    margin-top: 1rem;
+}
+
+[data-testid="stSidebar"] .stSelectbox label {
+    color: #555;
+    font-weight: 500;
+}
+
+[data-testid="stSidebar"] .stInfo {
+    background-color: #e8f4f8;
+    border: 1px solid #4ECDC4;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+[data-testid="stSidebar"] hr {
+    margin: 1rem 0;
+    border-color: #ddd;
+}
+
 /* Databricks logo positioning */
 .databricks-logo-link {
     position: fixed;
