@@ -35,7 +35,7 @@ st.set_page_config(
     page_title=AppConfig.APP_TITLE,
     page_icon=AppConfig.PAGE_ICON,
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 # Load custom CSS
@@ -558,50 +558,8 @@ def main():
     # Initialize session state
     init_session_state()
     
-    # Add instruction for sidebar
-    if "sidebar_shown" not in st.session_state:
-        st.session_state.sidebar_shown = False
-    
-    # Show instruction to use sidebar
-    st.markdown("""
-        <style>
-        .sidebar-instruction {
-            background-color: #262730;
-            border: 1px solid #3A3A4A;
-            border-radius: 6px;
-            padding: 10px 20px;
-            margin-bottom: 20px;
-            color: #FAFAFA;
-            font-size: 0.9rem;
-            text-align: center;
-        }
-        .sidebar-arrow {
-            animation: bounce 2s infinite;
-            display: inline-block;
-            margin-right: 10px;
-        }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {transform: translateX(0);}
-            40% {transform: translateX(-5px);}
-            60% {transform: translateX(-3px);}
-        }
-        </style>
-    """, unsafe_allow_html=True)
-    
-    if not st.session_state.sidebar_shown:
-        st.markdown("""
-            <div class="sidebar-instruction">
-                <span class="sidebar-arrow">👈</span>
-                Click the arrow in the top left to access AI model and service settings
-            </div>
-        """, unsafe_allow_html=True)
-    
     # Sidebar for model and service selection
     with st.sidebar:
-        # Mark sidebar as shown
-        if not st.session_state.sidebar_shown:
-            st.session_state.sidebar_shown = True
-            
         st.markdown("### ⚙️ Configuration")
         st.markdown("---")
         

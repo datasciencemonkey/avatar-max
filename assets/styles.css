@@ -240,11 +240,7 @@
     animation: diceRoll 0.5s ease-in-out;
 }
 
-/* Style Streamlit header to be minimal but keep sidebar toggle */
-header[data-testid="stHeader"] {
-    background-color: transparent !important;
-    height: 3rem !important;
-}
+/* Keep default Streamlit header */
 
 /* Alternative selectors for deploy button */
 .stDeployButton {
@@ -272,79 +268,7 @@ div[class*="deploy"] {
     display: none !important;
 }
 
-/* Make sidebar toggle arrow more visible */
-button[kind="header"] {
-    display: block !important;
-    background-color: #262730 !important;
-    border: 1px solid #3A3A4A !important;
-}
-
-/* Sidebar toggle button styling */
-.css-1rs6os.edgvbvh3 {
-    visibility: visible !important;
-    background-color: #262730 !important;
-}
-
-/* Sidebar styling - matching dark theme */
-.css-1d391kg {  /* Sidebar container */
-    background-color: #0E1117;
-    padding-top: 2rem;
-}
-
-[data-testid="stSidebar"] {
-    background-color: #0E1117;
-    border-right: 1px solid #262730;
-}
-
-[data-testid="stSidebar"] > div:first-child {
-    background-color: #0E1117;
-}
-
-[data-testid="stSidebar"] h3 {
-    color: #FF6B6B;
-    font-weight: 600;
-}
-
-[data-testid="stSidebar"] h4 {
-    color: #FAFAFA;
-    font-weight: 500;
-    margin-top: 1rem;
-}
-
-[data-testid="stSidebar"] .stSelectbox label {
-    color: #FAFAFA;
-    font-weight: 500;
-}
-
-[data-testid="stSidebar"] .stSelectbox > div > div {
-    background-color: #262730;
-    border: 1px solid #3A3A4A;
-    color: #FAFAFA;
-}
-
-[data-testid="stSidebar"] .stInfo {
-    background-color: #262730;
-    border: 1px solid #3A3A4A;
-    border-radius: 8px;
-    padding: 1rem;
-    color: #FAFAFA;
-}
-
-[data-testid="stSidebar"] hr {
-    margin: 1rem 0;
-    border-color: #3A3A4A;
-}
-
-/* Sidebar expander styling */
-[data-testid="stSidebar"] .streamlit-expanderHeader {
-    background-color: #262730;
-    color: #FAFAFA;
-}
-
-[data-testid="stSidebar"] .streamlit-expanderContent {
-    background-color: #1A1A2E;
-    border: 1px solid #3A3A4A;
-}
+/* Use default Streamlit sidebar styling */
 
 /* Databricks logo positioning */
 .databricks-logo-link {
