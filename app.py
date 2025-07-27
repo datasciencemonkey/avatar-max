@@ -34,8 +34,7 @@ load_dotenv()
 st.set_page_config(
     page_title=AppConfig.APP_TITLE,
     page_icon=AppConfig.PAGE_ICON,
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
 # Load custom CSS
@@ -558,66 +557,6 @@ def main():
     # Initialize session state
     init_session_state()
     
-    # Add settings button container at the bottom
-    settings_container = st.container()
-    
-    # Sidebar for model and service selection
-    with st.sidebar:
-        st.markdown("### ⚙️ Configuration")
-        st.markdown("---")
-        
-        # Model selection
-        st.markdown("#### 🤖 AI Model")
-        model_options = ["Flux Context Dev", "Flux Context Pro", "Flux Context Max"]
-        selected_model = st.selectbox(
-            "Choose Model",
-            model_options,
-            index=model_options.index(st.session_state.selected_model),
-            key="model_selector",
-            help="Select the AI model for avatar generation"
-        )
-        
-        if selected_model != st.session_state.selected_model:
-            st.session_state.selected_model = selected_model
-        
-        # Service selection
-        st.markdown("#### 🌐 Service Provider")
-        service_options = ["Replicate", "Fal"]
-        selected_service = st.selectbox(
-            "Choose Service",
-            service_options,
-            index=service_options.index(st.session_state.selected_service),
-            key="service_selector",
-            help="Select the service provider for AI processing"
-        )
-        
-        if selected_service != st.session_state.selected_service:
-            st.session_state.selected_service = selected_service
-        
-        # Display current selection
-        st.markdown("---")
-        st.markdown("#### 📊 Current Selection")
-        st.info(f"**Model:** {st.session_state.selected_model}\n\n**Service:** {st.session_state.selected_service}")
-        
-        # Add information about the models
-        with st.expander("ℹ️ Model Information"):
-            st.markdown("""
-            **Flux Context Dev**
-            - Development version
-            - Faster processing
-            - Good for testing
-            
-            **Flux Context Pro**
-            - Production quality
-            - Balanced speed and quality
-            - Recommended for most users
-            
-            **Flux Context Max**
-            - Maximum quality
-            - Slower processing
-            - Best results
-            """)
-    
     # Header
     st.markdown(
         f"<h1 class='stTitle'>{AppConfig.APP_TITLE}</h1>",
@@ -644,43 +583,58 @@ def main():
     elif st.session_state.step == 5:
         step_display_result()
     
+    # Model and Service Configuration at the bottom
+    st.markdown("---")
+    with st.expander("⚙️ **Advanced Settings** - AI Model & Service Configuration"):
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("#### 🤖 AI Model")
+            model_options = ["Flux Context Dev", "Flux Context Pro", "Flux Context Max"]
+            selected_model = st.selectbox(
+                "Choose Model",
+                model_options,
+                index=model_options.index(st.session_state.selected_model),
+                key="model_selector",
+                help="Select the AI model for avatar generation"
+            )
+            
+            if selected_model != st.session_state.selected_model:
+                st.session_state.selected_model = selected_model
+                st.rerun()
+        
+        with col2:
+            st.markdown("#### 🌐 Service Provider")
+            service_options = ["Replicate", "Fal"]
+            selected_service = st.selectbox(
+                "Choose Service",
+                service_options,
+                index=service_options.index(st.session_state.selected_service),
+                key="service_selector",
+                help="Select the service provider for AI processing"
+            )
+            
+            if selected_service != st.session_state.selected_service:
+                st.session_state.selected_service = selected_service
+                st.rerun()
+        
+        # Display current selection
+        st.info(f"**Current Configuration:** {st.session_state.selected_model} on {st.session_state.selected_service}")
+        
+        # Model information
+        st.markdown("#### ℹ️ Model Information")
+        st.markdown("""
+        - **Flux Context Dev**: Development version - Faster processing, good for testing
+        - **Flux Context Pro**: Production quality - Balanced speed and quality (Recommended)
+        - **Flux Context Max**: Maximum quality - Slower processing, best results
+        """)
+    
     # Footer
     st.markdown("---")
     st.markdown(
         f"<p style='text-align: center; color: #888;'>{AppConfig.EVENT_NAME}</p>",
         unsafe_allow_html=True
     )
-    
-    # Settings button at bottom right with container
-    with settings_container:
-        st.markdown("""
-            <style>
-            div[data-testid="stHorizontalBlock"]:has(button[key="settings_float"]) {
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                background: none;
-                z-index: 999;
-            }
-            button[key="settings_float"] {
-                background-color: #262730;
-                border-radius: 50%;
-                width: 50px;
-                height: 50px;
-                padding: 0;
-                font-size: 24px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            }
-            button[key="settings_float"]:hover {
-                background-color: #3A3A4A;
-            }
-            </style>
-        """, unsafe_allow_html=True)
-        
-        col1, col2, col3 = st.columns([10, 1, 1])
-        with col3:
-            if st.button("⚙️", key="settings_float", help="Open settings sidebar (or use the arrow at top left)"):
-                st.info("👈 Click the arrow at the top left to open the settings sidebar")
 
 
 if __name__ == "__main__":

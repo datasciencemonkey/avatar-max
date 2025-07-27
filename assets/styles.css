@@ -240,42 +240,25 @@
     animation: diceRoll 0.5s ease-in-out;
 }
 
-/* Hide Streamlit header since we'll use custom settings button */
-header[data-testid="stHeader"] {
-    display: none !important;
-}
+/* Keep default Streamlit styling */
 
 /* Alternative selectors for deploy button */
 .stDeployButton {
     display: none !important;
 }
 
-/* Hide native sidebar toggle since we'll use custom button */
-button[kind="header"] {
-    display: none !important;
-}
 
 /* Hide the entire toolbar/menu */
 #MainMenu {
     visibility: hidden !important;
 }
 
-/* Keep toolbar hidden */
-.stToolbar {
-    display: none !important;
-}
-
-/* Hide the header action buttons */
-[data-testid="stToolbar"] {
-    display: none !important;
-}
 
 /* Hide any deploy related elements */
 div[class*="deploy"] {
     display: none !important;
 }
 
-/* Use default Streamlit sidebar styling */
 
 /* Databricks logo positioning */
 .databricks-logo-link {
