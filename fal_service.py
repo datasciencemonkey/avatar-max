@@ -75,6 +75,8 @@ class FalImageGenerator:
             # Remove None values
             input_data = {k: v for k, v in input_data.items() if v is not None}
             
+            print(f"[FalImageGenerator] Generating with model: {self.model_name}")
+            
             # Run the model
             result = fal_client.run(
                 self.model_name,

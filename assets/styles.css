@@ -273,14 +273,19 @@ div[class*="deploy"] {
     display: none !important;
 }
 
-/* Sidebar styling */
+/* Sidebar styling - matching dark theme */
 .css-1d391kg {  /* Sidebar container */
-    background-color: #f8f9fa;
+    background-color: #0E1117;
     padding-top: 2rem;
 }
 
 [data-testid="stSidebar"] {
-    background-color: #f8f9fa;
+    background-color: #0E1117;
+    border-right: 1px solid #262730;
+}
+
+[data-testid="stSidebar"] > div:first-child {
+    background-color: #0E1117;
 }
 
 [data-testid="stSidebar"] h3 {
@@ -289,26 +294,44 @@ div[class*="deploy"] {
 }
 
 [data-testid="stSidebar"] h4 {
-    color: #333;
+    color: #FAFAFA;
     font-weight: 500;
     margin-top: 1rem;
 }
 
 [data-testid="stSidebar"] .stSelectbox label {
-    color: #555;
+    color: #FAFAFA;
     font-weight: 500;
 }
 
+[data-testid="stSidebar"] .stSelectbox > div > div {
+    background-color: #262730;
+    border: 1px solid #3A3A4A;
+    color: #FAFAFA;
+}
+
 [data-testid="stSidebar"] .stInfo {
-    background-color: #e8f4f8;
-    border: 1px solid #4ECDC4;
+    background-color: #262730;
+    border: 1px solid #3A3A4A;
     border-radius: 8px;
     padding: 1rem;
+    color: #FAFAFA;
 }
 
 [data-testid="stSidebar"] hr {
     margin: 1rem 0;
-    border-color: #ddd;
+    border-color: #3A3A4A;
+}
+
+/* Sidebar expander styling */
+[data-testid="stSidebar"] .streamlit-expanderHeader {
+    background-color: #262730;
+    color: #FAFAFA;
+}
+
+[data-testid="stSidebar"] .streamlit-expanderContent {
+    background-color: #1A1A2E;
+    border: 1px solid #3A3A4A;
 }
 
 /* Databricks logo positioning */

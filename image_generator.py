@@ -49,6 +49,8 @@ class ReplicateImageGenerator:
         Returns:
             URL of generated image or None
         """
+        print(f"[ReplicateImageGenerator] Generating with model: {self.model_name}")
+        
         # Run the FLUX Kontext model
         output = self.client.run(
             self.model_name,
@@ -105,6 +107,8 @@ class ImageGenerator:
         self.model = model or "Flux Context Pro"
         self.style_checker = StyleConsistencyChecker()
         
+        print(f"[ImageGenerator] Initializing with provider='{self.provider}', model='{self.model}'")
+        
         # Normalize provider name
         if self.provider.lower() == "replicate":
             self.generator = ReplicateImageGenerator(model=self.model)
@@ -113,6 +117,10 @@ class ImageGenerator:
             self.generator = FalImageGenerator(model=self.model)
         else:
             raise ValueError(f"Unsupported AI provider: {self.provider}")
+        
+        # Log the actual model being used
+        if hasattr(self.generator, 'model_name'):
+            print(f"[ImageGenerator] Using actual model: {self.generator.model_name}")
     
     def generate_avatar(
         self,

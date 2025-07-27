@@ -35,7 +35,7 @@ st.set_page_config(
     page_title=AppConfig.APP_TITLE,
     page_icon=AppConfig.PAGE_ICON,
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 # Load custom CSS
@@ -557,6 +557,26 @@ def main():
     
     # Initialize session state
     init_session_state()
+    
+    # Add subtle settings hint
+    st.markdown("""
+        <style>
+        .settings-hint {
+            position: fixed;
+            top: 70px;
+            left: 10px;
+            font-size: 0.8rem;
+            color: #666;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            z-index: 999;
+        }
+        .settings-hint:hover {
+            opacity: 1;
+        }
+        </style>
+        <div class="settings-hint">⚙️ Click hamburger menu for settings</div>
+    """, unsafe_allow_html=True)
     
     # Sidebar for model and service selection
     with st.sidebar:
