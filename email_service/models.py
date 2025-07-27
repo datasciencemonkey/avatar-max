@@ -5,10 +5,13 @@ from datetime import datetime
 from typing import Optional, Dict, Any
 
 from sqlalchemy import Column, String, DateTime, Integer, Boolean, Text, ForeignKey, Index
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-Base = declarative_base()
+# Import Base from main database to ensure tables are in same metadata
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+from database import Base
 
 
 class EmailRequest(Base):
