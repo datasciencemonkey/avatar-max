@@ -387,7 +387,7 @@ def step_display_result():
     # Regeneration tip
     st.caption("💡 Try regenerating for different variations!")
     
-    # Download button
+    # Download and Email buttons
     if AppConfig.ENABLE_DOWNLOAD:
         avatar_bytes = save_image(
             st.session_state.generated_avatar,
@@ -395,14 +395,106 @@ def step_display_result():
             "temp_avatar.png"
         )
         
-        with open(avatar_bytes, "rb") as f:
-            st.download_button(
-                label="⬇️ Download Your Avatar",
-                data=f.read(),
-                file_name=f"{st.session_state.form_data['name'].replace(' ', '_')}_superhero_avatar.png",
-                mime="image/png",
-                use_container_width=True
-            )
+        # Add custom CSS for button alignment and styling
+        st.markdown(
+            """<style>
+            /* Ensure buttons are properly aligned */
+            div[data-testid="column"] > div > div > div > div {
+                height: 100%;
+                display: flex;
+                align-items: stretch;
+            }
+            
+            /* Style both buttons with rounded corners */
+            div[data-testid="column"] button {
+                border-radius: 25px !important;
+                padding: 0.75rem 2rem !important;
+                font-size: 1rem !important;
+                height: 100%;
+                transition: all 0.3s ease !important;
+            }
+            
+            /* Style the download button - keep original appearance but with rounded shape */
+            div[data-testid="column"]:first-child .stDownloadButton > button {
+                background-color: #FAFAFA !important;
+                color: #262730 !important;
+                border: 1px solid rgba(49, 51, 63, 0.2) !important;
+                font-weight: 400 !important;
+            }
+            
+            div[data-testid="column"]:first-child .stDownloadButton > button:hover {
+                background-color: #F0F2F6 !important;
+                border-color: rgba(49, 51, 63, 0.4) !important;
+            }
+            
+            /* Style the email button - make it prominent with gradient */
+            div[data-testid="column"]:last-child button {
+                background: linear-gradient(90deg, #FF6B35 0%, #F7931E 100%) !important;
+                color: white !important;
+                border: none !important;
+                font-weight: 600 !important;
+                box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3) !important;
+                letter-spacing: 0.5px !important;
+            }
+            
+            div[data-testid="column"]:last-child button:hover {
+                background: linear-gradient(90deg, #FF4500 0%, #FF6B35 100%) !important;
+                box-shadow: 0 6px 20px rgba(255, 69, 0, 0.4) !important;
+                transform: translateY(-1px) !important;
+            }
+            
+            /* Ensure equal height for both buttons */
+            div[data-testid="column"] .stDownloadButton {
+                height: 100%;
+            }
+            
+            div[data-testid="column"] .stDownloadButton > button,
+            div[data-testid="column"] > div > div > div > button {
+                min-height: 3rem !important;
+            }
+            </style>""",
+            unsafe_allow_html=True
+        )
+        
+        # Create two columns for buttons
+        col1, col2 = st.columns(2, gap="small")
+        
+        with col1:
+            with open(avatar_bytes, "rb") as f:
+                st.download_button(
+                    label="⬇️ Download Your Avatar",
+                    data=f.read(),
+                    file_name=f"{st.session_state.form_data['name'].replace(' ', '_')}_superhero_avatar.png",
+                    mime="image/png",
+                    use_container_width=True
+                )
+        
+        with col2:
+            if st.button("📧 Email My Avatar", key="email_avatar", use_container_width=True):
+                try:
+                    # Import email service components
+                    from email_service.db_manager import email_db_manager
+                    
+                    # Create email request
+                    email = st.session_state.form_data["email"]
+                    name = st.session_state.form_data["name"]
+                    
+                    email_request_id = email_db_manager.create_email_request(
+                        avatar_request_id=st.session_state.request_id,
+                        recipient_email=email,
+                        recipient_name=name
+                    )
+                    
+                    # Mark avatar request as email requested
+                    email_db_manager.mark_email_requested(st.session_state.request_id)
+                    
+                    # Show success message
+                    st.success(f"✅ We'll email your avatar to **{email}** within 5 minutes!")
+                    st.info("💡 Check your inbox (and spam folder just in case)")
+                    
+                except Exception as e:
+                    st.error("😔 Sorry, we couldn't queue your email request. Please try again later.")
+                    print(f"Email request error: {e}")
     
     # Regenerate button with special styling
     st.markdown("---")

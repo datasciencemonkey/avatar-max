@@ -1,0 +1,17 @@
+Your Superhero Avatar is Ready! 🦸
+
+Hi {{NAME}}!
+
+Your incredible {{SUPERHERO}}-inspired avatar is ready! We've transformed you into a superhero with your chosen {{COLOR}} theme, and yes, we included your favorite ride - the {{CAR}}!
+
+Your avatar image is attached to this email. Download it and show off your superhero transformation!
+
+Share your transformation on social media with #InnovationGarageHero
+
+---
+
+Created with ❤️ at Innovation Garage
+Powered by Databricks AI & CarMax Innovation
+
+© {{YEAR}} Innovation Garage. All rights reserved.
+This email was sent to you because you created a superhero avatar at our event.

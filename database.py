@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Optional, Dict, Any
 from contextlib import contextmanager
 
-from sqlalchemy import create_engine, Column, String, DateTime, Integer, Text
+from sqlalchemy import create_engine, Column, String, DateTime, Integer, Text, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import NullPool
@@ -48,6 +48,10 @@ class AvatarRequest(Base):
     original_image_path = Column(String(500), nullable=True)
     generated_image_path = Column(String(500), nullable=True)
     
+    # Email tracking fields
+    email_requested = Column(Boolean, default=False, nullable=False)
+    email_request_time = Column(DateTime, nullable=True)
+    
     def to_dict(self) -> Dict[str, Any]:
         """Convert model to dictionary."""
         return {
@@ -62,7 +66,9 @@ class AvatarRequest(Base):
             'status': self.status,
             'error_message': self.error_message,
             'original_image_path': self.original_image_path,
-            'generated_image_path': self.generated_image_path
+            'generated_image_path': self.generated_image_path,
+            'email_requested': self.email_requested,
+            'email_request_time': self.email_request_time.isoformat() if self.email_request_time else None
         }
 
 

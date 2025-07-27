@@ -18,7 +18,7 @@ class DatabricksClaudeCommentator:
     def __init__(self):
         """Initialize the Databricks Claude client."""
         self.endpoint_url = os.getenv("DATABRICKS_CLAUDE_ENDPOINT", 
-                                     "https://dbc-d1e02ff6-e1cc.cloud.databricks.com/serving-endpoints/databricks-claude-3-7-sonnet/invocations")
+                                     "None")
         self.token = os.getenv("DATABRICKS_TOKEN")
         
         if not self.token:
@@ -106,23 +106,17 @@ Respond in JSON format:
             "Content-Type": "application/json"
         }
         
-        # Format request for Databricks serving endpoint
+        # Format request according to Databricks documentation
+        # Using the correct format for vision models on Databricks
         data = {
             "messages": [
                 {
                     "role": "user",
                     "content": [
+                        {"type": "text", "text": prompt},
                         {
-                            "type": "text",
-                            "text": prompt
-                        },
-                        {
-                            "type": "image",
-                            "source": {
-                                "type": "base64",
-                                "media_type": "image/png",
-                                "data": image_base64
-                            }
+                            "type": "image_url",
+                            "image_url": {"url": f"data:image/png;base64,{image_base64}"}
                         }
                     ]
                 }
@@ -150,14 +144,24 @@ Respond in JSON format:
             return None
     
     def _parse_response(self, response: Dict) -> Tuple[float, str, Dict]:
-        """Parse Claude's response."""
+        """Parse Claude's response from Databricks format."""
         try:
-            # Extract the text content from Claude's response
+            # Databricks model serving returns in OpenAI-compatible format
+            content = None
+            
+            # Extract content from response
             if "choices" in response and len(response["choices"]) > 0:
-                content = response["choices"][0]["message"]["content"]
+                # Standard OpenAI/Databricks format
+                message = response["choices"][0].get("message", {})
+                content = message.get("content", "")
+            elif "predictions" in response:
+                # Alternative Databricks format
+                content = response["predictions"]
             elif "content" in response:
+                # Direct content
                 content = response["content"]
             else:
+                # Fallback to string representation
                 content = str(response)
             
             # Try to parse JSON from the content
@@ -184,6 +188,7 @@ Respond in JSON format:
             
         except Exception as e:
             print(f"Error parsing Claude response: {e}")
+            print(f"Response structure: {response}")
             # Return defaults if parsing fails
             return 0.75, "Fantastic superhero avatar! Ready to save the day!", {}
 
