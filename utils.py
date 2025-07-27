@@ -265,7 +265,7 @@ def create_participant_record(
         },
         "metadata": {
             "generation_time": generation_time,
-            "ai_model": AppConfig.REPLICATE_MODEL_NAME if AppConfig.AI_PROVIDER == "replicate" else AppConfig.FAL_MODEL_NAME,
+            "ai_model": f"{AppConfig.AI_PROVIDER} (configured)",
             "event": AppConfig.EVENT_NAME
         }
     }

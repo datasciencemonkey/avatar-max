@@ -20,23 +20,14 @@ from logo_overlay import add_logo_to_image
 class ReplicateImageGenerator:
     """Handles AI image generation using Replicate."""
     
-    def __init__(self, model: str = "Flux Context Pro"):
-        """Initialize the Replicate generator.
-        
-        Args:
-            model: Model name to use
-        """
+    def __init__(self):
+        """Initialize the Replicate generator."""
         if not AppConfig.REPLICATE_API_TOKEN:
             raise ValueError("REPLICATE_API_TOKEN is required")
         
         # Initialize Replicate client
         self.client = replicate.Client(api_token=AppConfig.REPLICATE_API_TOKEN)
-        
-        # Get the appropriate model name from config
-        self.model_name = AppConfig.MODEL_MAPPINGS.get("Replicate", {}).get(
-            model, 
-            "black-forest-labs/flux-kontext-pro"  # Default fallback
-        )
+        self.model_name = AppConfig.REPLICATE_MODEL
     
     def generate(self, image_data: str, prompt: str, seed: int = -1) -> Optional[str]:
         """Run the Replicate model.
@@ -49,7 +40,6 @@ class ReplicateImageGenerator:
         Returns:
             URL of generated image or None
         """
-        print(f"[ReplicateImageGenerator] Generating with model: {self.model_name}")
         
         # Run the FLUX Kontext model
         output = self.client.run(
@@ -96,31 +86,18 @@ class ReplicateImageGenerator:
 class ImageGenerator:
     """Unified image generator that supports multiple providers."""
     
-    def __init__(self, provider: Optional[str] = None, model: Optional[str] = None):
-        """Initialize the image generator with specified provider and model.
-        
-        Args:
-            provider: Service provider ('Replicate' or 'Fal'). If None, uses config default.
-            model: Model name ('Flux Context Dev', 'Pro', or 'Max'). If None, uses 'Pro'.
-        """
-        self.provider = provider or AppConfig.AI_PROVIDER
-        self.model = model or "Flux Context Pro"
+    def __init__(self):
+        """Initialize the image generator with configured provider."""
+        self.provider = AppConfig.AI_PROVIDER
         self.style_checker = StyleConsistencyChecker()
         
-        print(f"[ImageGenerator] Initializing with provider='{self.provider}', model='{self.model}'")
-        
-        # Normalize provider name
-        if self.provider.lower() == "replicate":
-            self.generator = ReplicateImageGenerator(model=self.model)
-        elif self.provider.lower() == "fal":
+        if self.provider == "replicate":
+            self.generator = ReplicateImageGenerator()
+        elif self.provider == "fal":
             from fal_service import FalImageGenerator
-            self.generator = FalImageGenerator(model=self.model)
+            self.generator = FalImageGenerator()
         else:
             raise ValueError(f"Unsupported AI provider: {self.provider}")
-        
-        # Log the actual model being used
-        if hasattr(self.generator, 'model_name'):
-            print(f"[ImageGenerator] Using actual model: {self.generator.model_name}")
     
     def generate_avatar(
         self,

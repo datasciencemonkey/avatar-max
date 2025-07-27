@@ -26,24 +26,14 @@ class AppConfig:
     TEXT_COLOR = "#FFFFFF"
 
     # AI Model Settings
-    AI_PROVIDER = os.getenv("AI_PROVIDER", "replicate")  # Default to replicate
+    AI_PROVIDER = os.getenv("AI_PROVIDER", "replicate")  # Options: "fal" or "replicate"
     
-    # Model mappings for different providers
-    MODEL_MAPPINGS = {
-        "Replicate": {
-            "Flux Context Dev": "black-forest-labs/flux-kontext-dev",
-            "Flux Context Pro": "black-forest-labs/flux-kontext-pro",
-            "Flux Context Max": "black-forest-labs/flux-kontext-max"
-        },
-        "Fal": {
-            "Flux Context Dev": "fal-ai/flux/kontext-dev",
-            "Flux Context Pro": "fal-ai/flux-pro/kontext",
-            "Flux Context Max": "fal-ai/flux-max/kontext"
-        }
-    }
-    
-    # API tokens
+    # Replicate settings
+    REPLICATE_MODEL = "black-forest-labs/flux-kontext-pro"
     REPLICATE_API_TOKEN = os.getenv("REPLICATE_API_TOKEN")
+    
+    # Fal AI settings
+    FAL_MODEL = "fal-ai/flux-pro/kontext"
     FAL_API_KEY = os.getenv("FAL_KEY")
     
     MODEL_VERSION = "latest"
