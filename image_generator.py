@@ -11,7 +11,6 @@ from PIL import Image
 
 from config import AppConfig
 from utils import process_uploaded_image
-from quality_check import StyleConsistencyChecker
 from databricks_claude import get_claude_commentary
 from fal_service import FalImageGenerator
 from logo_overlay import add_logo_to_image
@@ -92,7 +91,6 @@ class ImageGenerator:
     def __init__(self):
         """Initialize the image generator with configured provider."""
         self.provider = AppConfig.AI_PROVIDER
-        self.style_checker = StyleConsistencyChecker()
         
         if self.provider == "replicate":
             self.generator = ReplicateImageGenerator()
@@ -180,19 +178,11 @@ class ImageGenerator:
                 print(f"Claude quality score: {claude_score:.2f}")
                 print(f"Commentary: {commentary}")
                 
-                # Also run basic style check for comparison
-                passes_check, basic_score, check_error = self.style_checker.check_image_style(generated_image)
-                
             except Exception as e:
                 print(f"Claude commentary error: {e}")
-                # Fallback to basic quality check
-                try:
-                    passes_check, style_score, check_error = self.style_checker.check_image_style(generated_image)
-                    claude_score = style_score
-                    commentary = "Your superhero avatar is ready!"
-                except:
-                    claude_score = None
-                    commentary = "Transformation complete!"
+                # Fallback when Claude is unavailable
+                claude_score = None
+                commentary = "Your superhero avatar is ready!"
             
             # Add CarMax logo overlay
             try:
