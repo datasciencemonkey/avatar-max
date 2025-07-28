@@ -13,6 +13,8 @@ Transform your photos into personalized superhero avatars using AI! This Streaml
 - **Database Integration**: PostgreSQL for tracking generation requests
 - **Enterprise Storage**: Support for Databricks Unity Catalog volumes
 - **Branded Output**: Avatars include Databricks and CarMax logos
+- **QR Code Sharing**: Generate shareable QR codes linking to your avatar
+- **Cloud Storage**: Avatars uploaded to Google Cloud Storage for easy sharing
 - **Download Ready**: Get your avatar as a PNG file
 
 ## Quick Start
@@ -57,6 +59,11 @@ Transform your photos into personalized superhero avatars using AI! This Streaml
    DATABRICKS_SCHEMA=your_schema
    DATABRICKS_VOLUME=your_volume
    ```
+   
+   - (Optional) For Google Cloud Storage (QR code sharing):
+   ```
+   GOOGLE_APPLICATION_CREDENTIALS=path/to/service-account.json
+   ```
 
 3. **Run the app**:
    ```bash
@@ -71,7 +78,7 @@ Transform your photos into personalized superhero avatars using AI! This Streaml
 2. **Preferences**: Choose superhero, car, and color
 3. **Photo**: Take or upload your photo
 4. **Generate**: AI creates your superhero avatar
-5. **Result**: Download your personalized avatar
+5. **Result**: Download your avatar or generate a shareable QR code
 
 ## Technology Stack
 
@@ -83,6 +90,8 @@ Transform your photos into personalized superhero avatars using AI! This Streaml
 - **Storage**: Local filesystem or Databricks Unity Catalog volumes
 - **Image Processing**: Pillow, OpenCV
 - **Quality Assessment**: Databricks-hosted Claude integration
+- **QR Code Generation**: qrcode library with PIL integration
+- **Cloud Storage**: Google Cloud Storage for avatar sharing
 - **Package Management**: uv (modern Python package manager)
 - **Python**: 3.12+
 
@@ -99,6 +108,9 @@ superhero-max/
 ├── databricks_claude.py   # Claude quality scoring
 ├── logo_overlay.py        # Logo branding functionality
 ├── quality_check.py       # Style consistency checker
+├── qr_service/            # QR code and cloud storage
+│   ├── gcs_uploader.py    # Google Cloud Storage integration
+│   └── qr_generator.py    # QR code generation
 ├── assets/               
 │   ├── styles.css         # Custom CSS styling
 │   ├── Databricks-Logo.png
@@ -138,11 +150,12 @@ The application can be configured through environment variables. See `.env.examp
 - **Storage**: Choose between local filesystem and Databricks volumes
 - **Database**: Optional PostgreSQL integration for tracking
 - **Branding**: Logos are automatically added to generated avatars
+- **QR Code Sharing**: Google Cloud Storage integration for shareable avatar links
 
 ## Planned Features
 
 - Batch inference for on-demand story/joke generation
-- Email delivery of generated avatars via Databricks jobs
+- Enhanced QR code customization and branding
 
 ## License
 
