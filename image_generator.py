@@ -41,20 +41,23 @@ class ReplicateImageGenerator:
             URL of generated image or None
         """
         
-        # Run the FLUX Kontext model
+        # Standard Flux model parameters
+        input_params = {
+            "prompt": prompt,
+            "input_image": image_data,
+            "seed": seed,
+            "aspect_ratio": "match_input_image",
+            "output_format": "png",
+            "safety_tolerance": 2,
+            "prompt_upsampling": True,
+            "num_outputs": 1,
+            "disable_safety_check": False
+        }
+        
+        # Run the model
         output = self.client.run(
             self.model_name,
-            input={
-                "prompt": prompt,
-                "input_image": image_data,
-                "seed": seed,
-                "aspect_ratio": "match_input_image",
-                "output_format": "png",
-                "safety_tolerance": 2,
-                "prompt_upsampling": True,
-                "num_outputs": 1,
-                "disable_safety_check": False
-            }
+            input=input_params
         )
         
         # Handle different Replicate API response formats
@@ -168,6 +171,8 @@ class ImageGenerator:
                     return None, 0, "Failed to generate image after multiple attempts"
             
             # Get Claude commentary and quality score
+            claude_score = None
+            commentary = None
             try:
                 claude_score, commentary = get_claude_commentary(
                     generated_image, superhero, color, car
@@ -175,24 +180,19 @@ class ImageGenerator:
                 print(f"Claude quality score: {claude_score:.2f}")
                 print(f"Commentary: {commentary}")
                 
-                # Store Claude's analysis
-                setattr(generated_image, 'style_score', claude_score)
-                setattr(generated_image, 'commentary', commentary)
-                
                 # Also run basic style check for comparison
                 passes_check, basic_score, check_error = self.style_checker.check_image_style(generated_image)
-                setattr(generated_image, 'basic_style_score', basic_score)
                 
             except Exception as e:
                 print(f"Claude commentary error: {e}")
                 # Fallback to basic quality check
                 try:
                     passes_check, style_score, check_error = self.style_checker.check_image_style(generated_image)
-                    setattr(generated_image, 'style_score', style_score)
-                    setattr(generated_image, 'commentary', "Your superhero avatar is ready!")
+                    claude_score = style_score
+                    commentary = "Your superhero avatar is ready!"
                 except:
-                    setattr(generated_image, 'style_score', None)
-                    setattr(generated_image, 'commentary', "Transformation complete!")
+                    claude_score = None
+                    commentary = "Transformation complete!"
             
             # Add CarMax logo overlay
             try:
@@ -239,6 +239,13 @@ class ImageGenerator:
                 print(f"Warning: Could not add Innovation Garage logo overlay: {e}")
             
             generation_time = time.time() - start_time
+            
+            # Re-attach the Claude analysis to the final image after logo overlays
+            if claude_score is not None:
+                setattr(generated_image, 'style_score', claude_score)
+            if commentary is not None:
+                setattr(generated_image, 'commentary', commentary)
+                
             return generated_image, generation_time, None
             
         except Exception as e:

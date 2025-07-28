@@ -368,20 +368,35 @@ def step_display_result():
         st.subheader("Superhero Avatar")
         st.image(st.session_state.generated_avatar, use_container_width=True)
     
-    # Show generation details and Claude's commentary
+    # Show generation time
+    st.info(f"⚡ Generated in {format_generation_time(st.session_state.generation_time)}")
+    
+    # Show AI feedback below generation time
     style_score = getattr(st.session_state.generated_avatar, 'style_score', None)
     commentary = getattr(st.session_state.generated_avatar, 'commentary', None)
     
-    # Display Claude's fun commentary if available
-    if commentary:
-        st.success(f"🎭 {commentary}")
+    # Debug logging
+    print(f"DEBUG: style_score = {style_score}")
+    print(f"DEBUG: commentary = {commentary}")
+    print(f"DEBUG: Avatar type = {type(st.session_state.generated_avatar)}")
     
-    # Show generation time and quality score
-    if style_score is not None:
-        quality_emoji = "🌟" if style_score >= 0.8 else "✨" if style_score >= 0.7 else "⭐"
-        st.info(f"{quality_emoji} Generated in {format_generation_time(st.session_state.generation_time)} | Quality score: {style_score:.1%}")
-    else:
-        st.info(f"✨ Generated in {format_generation_time(st.session_state.generation_time)}")
+    # Display AI Comment and Score
+    if style_score is not None or commentary:
+        with st.container():
+            # Show AI Comment
+            if commentary:
+                st.success(f"🤖 **AI Says:** {commentary}")
+            
+            # Show score
+            if style_score is not None:
+                score_percentage = style_score * 100
+                score_text = f"**Quality Score:** {score_percentage:.0f}/100"
+                if style_score >= 0.8:
+                    st.caption(f"{score_text} 🌟")
+                elif style_score >= 0.7:
+                    st.caption(f"{score_text} ✨")
+                else:
+                    st.caption(f"{score_text} ⭐")
     
     # Regeneration tip
     st.caption("💡 Try regenerating for different variations!")
@@ -426,7 +441,7 @@ def step_display_result():
                 border-color: rgba(49, 51, 63, 0.4) !important;
             }
             
-            /* Style the email button - make it prominent with gradient */
+            /* Style the QR code button - make it prominent with gradient */
             div[data-testid="column"]:last-child button {
                 background: linear-gradient(90deg, #FF6B35 0%, #F7931E 100%) !important;
                 color: white !important;
@@ -469,31 +484,32 @@ def step_display_result():
                 )
         
         with col2:
-            if st.button("📧 Email My Avatar", key="email_avatar", use_container_width=True):
+            if st.button("🔗 Generate QR Code", key="qr_code", use_container_width=True):
                 try:
-                    # Import email service components
-                    from email_service.db_manager import email_db_manager
+                    from qr_service.gcs_uploader import upload_to_gcs
+                    from qr_service.qr_generator import generate_qr_code
                     
-                    # Create email request
-                    email = st.session_state.form_data["email"]
-                    name = st.session_state.form_data["name"]
+                    # Upload avatar to GCS
+                    with st.spinner("Uploading avatar..."):
+                        public_url = upload_to_gcs(st.session_state.generated_avatar)
                     
-                    email_request_id = email_db_manager.create_email_request(
-                        avatar_request_id=st.session_state.request_id,
-                        recipient_email=email,
-                        recipient_name=name
-                    )
-                    
-                    # Mark avatar request as email requested
-                    email_db_manager.mark_email_requested(st.session_state.request_id)
-                    
-                    # Show success message
-                    st.success(f"✅ We'll email your avatar to **{email}** within 5 minutes!")
-                    st.info("💡 Check your inbox (and spam folder just in case)")
-                    
+                    if public_url:
+                        # Generate QR code
+                        qr_img = generate_qr_code(public_url)
+                        
+                        if qr_img:
+                            # Show QR code in a popup
+                            st.success("✅ QR Code generated!")
+                            st.image(qr_img, caption="Scan to view avatar", width=200)
+                            st.caption("Share this QR code to let others see your superhero avatar!")
+                        else:
+                            st.error("Failed to generate QR code")
+                    else:
+                        st.error("Failed to upload avatar")
+                        
                 except Exception as e:
-                    st.error("😔 Sorry, we couldn't queue your email request. Please try again later.")
-                    print(f"Email request error: {e}")
+                    st.error("😔 Sorry, we couldn't generate the QR code. Please try again later.")
+                    print(f"QR generation error: {e}")
     
     # Regenerate button with special styling
     st.markdown("---")

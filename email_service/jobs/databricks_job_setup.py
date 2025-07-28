@@ -10,27 +10,15 @@ import json
 import os
 import sys
 from pathlib import Path
-from databricks import sql
+from dotenv import load_dotenv
+
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service import jobs
+from databricks.sdk.service.workspace import ImportFormat
 
-def create_secrets_scope(client: WorkspaceClient, scope_name: str = "email-service"):
-    """Create secrets scope for email service credentials."""
-    print(f"Creating secrets scope: {scope_name}")
-    
-    try:
-        client.secrets.create_scope(
-            scope=scope_name,
-            initial_manage_principal="users"
-        )
-        print(f"✅ Created secrets scope: {scope_name}")
-    except Exception as e:
-        if "already exists" in str(e):
-            print(f"⚠️  Secrets scope already exists: {scope_name}")
-        else:
-            raise
+load_dotenv()
 
-def upload_secrets(client: WorkspaceClient, scope_name: str = "email-service"):
+def upload_secrets(client: WorkspaceClient, scope_name: str = "sgscope"):
     """Upload email service secrets to Databricks."""
     print("\nUploading secrets...")
     
@@ -41,18 +29,12 @@ def upload_secrets(client: WorkspaceClient, scope_name: str = "email-service"):
         "brevo-smtp-login": os.getenv("BREVO_SMTP_LOGIN", "93330f001@smtp-brevo.com"),
         "brevo-smtp-password": os.getenv("BREVO_SMTP_PASSWORD"),
         "email-from-address": os.getenv("EMAIL_FROM_ADDRESS"),
-        "email-from-name": os.getenv("EMAIL_FROM_NAME", "Innovation Garage Superhero Creator"),
+        "email-from-name": os.getenv("EMAIL_FROM_NAME", "Databricks Innovation Garage Superhero"),
         "email-reply-to": os.getenv("EMAIL_REPLY_TO", "noreply@innovationgarage.com")
     }
     
     # Also need the main app secrets
-    app_scope = "superhero-app"
-    try:
-        client.secrets.create_scope(scope=app_scope, initial_manage_principal="users")
-        print(f"✅ Created secrets scope: {app_scope}")
-    except Exception as e:
-        if "already exists" in str(e):
-            print(f"⚠️  Secrets scope already exists: {app_scope}")
+    app_scope = "sgscope"
     
     app_secrets = {
         "database-url": os.getenv("DATABASE_URL"),
@@ -85,7 +67,7 @@ def upload_secrets(client: WorkspaceClient, scope_name: str = "email-service"):
             except Exception as e:
                 print(f"❌ Failed to upload secret {key}: {e}")
 
-def upload_job_code(client: WorkspaceClient, workspace_path: str = "/Workspace/superhero-email-service"):
+def upload_job_code(client: WorkspaceClient, workspace_path: str = "/Workspace/Users/sathish.gangichetty@databricks.com/superhero-email-service"):
     """Upload the email processing code to Databricks workspace."""
     print(f"\nUploading code to workspace: {workspace_path}")
     
@@ -97,8 +79,8 @@ def upload_job_code(client: WorkspaceClient, workspace_path: str = "/Workspace/s
         if "already exists" in str(e):
             print(f"⚠️  Workspace directory already exists: {workspace_path}")
     
-    # Upload process_email_queue.py
-    local_file = Path(__file__).parent / "process_email_queue.py"
+    # Upload process_email_queue_notebook.py as a notebook
+    local_file = Path(__file__).parent / "process_email_queue_notebook.py"
     remote_file = f"{workspace_path}/process_email_queue.py"
     
     try:
@@ -106,6 +88,7 @@ def upload_job_code(client: WorkspaceClient, workspace_path: str = "/Workspace/s
             client.workspace.upload(
                 path=remote_file,
                 content=f.read(),
+                format=ImportFormat.AUTO,
                 overwrite=True
             )
         print(f"✅ Uploaded: {remote_file}")
@@ -150,17 +133,20 @@ def upload_job_code(client: WorkspaceClient, workspace_path: str = "/Workspace/s
         if local_template.exists():
             remote_template = f"{templates_path}/{template}"
             try:
-                with open(local_template, "rb") as f:
+                with open(local_template, "r") as f:
+                    content = f.read()
+                    # Upload as a file with explicit format
                     client.workspace.upload(
                         path=remote_template,
-                        content=f.read(),
+                        content=content.encode('utf-8'),
+                        format=ImportFormat.AUTO,
                         overwrite=True
                     )
                 print(f"✅ Uploaded: {remote_template}")
             except Exception as e:
                 print(f"❌ Failed to upload template {template}: {e}")
 
-def create_job(client: WorkspaceClient, job_config_path: str, workspace_path: str = "/Workspace/superhero-email-service"):
+def create_job(client: WorkspaceClient, job_config_path: str, workspace_path: str = "/Workspace/Users/sathish.gangichetty@databricks.com/superhero-email-service"):
     """Create the Databricks job for email processing."""
     print("\nCreating Databricks job...")
     
@@ -174,25 +160,33 @@ def create_job(client: WorkspaceClient, job_config_path: str, workspace_path: st
         "description": "Process pending superhero avatar emails from the queue",
         "run_if": "ALL_SUCCESS",
         "notebook_task": {
-            "notebook_path": f"{workspace_path}/process_email_queue",
+            "notebook_path": f"{workspace_path}/process_email_queue.py",
             "base_parameters": {
-                "batch_size": "50"
+                "batch_size": "50",
+                "dry_run": "false"
             }
         },
-        "job_cluster_key": "email_processor_cluster",
+        "existing_cluster_id": "0118-165440-l8erfx3g",
         "timeout_seconds": 600,
         "retry_on_timeout": True,
         "max_retries": 2,
-        "min_retry_interval_millis": 60000,
-        "libraries": job_config["tasks"][0]["libraries"]
+        "min_retry_interval_millis": 60000
     }
     
     # Create the job
     try:
-        job = client.jobs.create(**job_config)
+        # Create job using the SDK's expected format - simplified to avoid enum issues
+        job = client.jobs.create(
+            name=job_config["name"],
+            tasks=job_config["tasks"],
+            schedule=job_config.get("schedule"),
+            max_concurrent_runs=job_config.get("max_concurrent_runs", 1),
+            timeout_seconds=job_config.get("timeout_seconds", 0),
+            tags=job_config.get("tags", {})
+        )
         print(f"✅ Created job: {job.job_id}")
-        print(f"   Name: {job_config['name']}")
-        print(f"   Schedule: Every 5 minutes")
+        print(f"Name: {job_config['name']}")
+        print(f"Schedule: Every 5 minutes")
         return job.job_id
     except Exception as e:
         print(f"❌ Failed to create job: {e}")
@@ -252,13 +246,11 @@ def main():
     
     # Setup steps
     try:
-        # 1. Create secrets scopes
-        create_secrets_scope(client)
         
-        # 2. Upload secrets
+        # 1. Upload secrets
         upload_secrets(client)
         
-        # 3. Upload code
+        # 2. Upload code
         upload_job_code(client)
         
         # 4. Create job

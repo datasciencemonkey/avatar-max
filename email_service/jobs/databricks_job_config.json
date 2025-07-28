@@ -1,7 +1,7 @@
 {
   "name": "process-superhero-email-queue",
   "email_notifications": {
-    "on_failure": ["admin@innovationgarage.com"],
+    "on_failure": ["sathish@databricks.com"],
     "no_alert_for_skipped_runs": true
   },
   "webhook_notifications": {},
@@ -61,15 +61,15 @@
           "spark.master": "local[*]"
         },
         "spark_env_vars": {
-          "BREVO_SMTP_SERVER": "{{secrets/email-service/brevo-smtp-server}}",
-          "BREVO_SMTP_PORT": "{{secrets/email-service/brevo-smtp-port}}",
-          "BREVO_SMTP_LOGIN": "{{secrets/email-service/brevo-smtp-login}}",
-          "BREVO_SMTP_PASSWORD": "{{secrets/email-service/brevo-smtp-password}}",
-          "EMAIL_FROM_ADDRESS": "{{secrets/email-service/email-from-address}}",
-          "EMAIL_FROM_NAME": "{{secrets/email-service/email-from-name}}",
-          "EMAIL_REPLY_TO": "{{secrets/email-service/email-reply-to}}",
-          "DATABASE_URL": "{{secrets/superhero-app/database-url}}",
-          "DATABRICKS_VOLUME": "{{secrets/superhero-app/databricks-volume}}"
+          "BREVO_SMTP_SERVER": "{{secrets/sgscope/brevo-smtp-server}}",
+          "BREVO_SMTP_PORT": "{{secrets/sgscope/brevo-smtp-port}}",
+          "BREVO_SMTP_LOGIN": "{{secrets/sgscope/brevo-smtp-login}}",
+          "BREVO_SMTP_PASSWORD": "{{secrets/sgscope/brevo-smtp-password}}",
+          "EMAIL_FROM_ADDRESS": "{{secrets/sgscope/email-from-address}}",
+          "EMAIL_FROM_NAME": "{{secrets/sgscope/email-from-name}}",
+          "EMAIL_REPLY_TO": "{{secrets/sgscope/email-reply-to}}",
+          "DATABASE_URL": "{{secrets/sgscope/database-url}}",
+          "DATABRICKS_VOLUME": "{{secrets/sgscope/databricks-volume}}"
         },
         "enable_elastic_disk": true,
         "runtime_engine": "STANDARD"
@@ -88,7 +88,7 @@
     "team": "innovation-garage"
   },
   "run_as": {
-    "user_name": "email-service@innovationgarage.com"
+    "user_name": "sathish.gangichetty@databricks.com"
   },
   "format": "MULTI_TASK",
   "queue": {

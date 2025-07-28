@@ -29,11 +29,11 @@ class AppConfig:
     AI_PROVIDER = os.getenv("AI_PROVIDER", "replicate")  # Options: "fal" or "replicate"
     
     # Replicate settings
-    REPLICATE_MODEL = "black-forest-labs/flux-kontext-pro"
+    REPLICATE_MODEL = os.getenv("AI_MODEL", "black-forest-labs/flux-kontext-pro")
     REPLICATE_API_TOKEN = os.getenv("REPLICATE_API_TOKEN")
     
     # Fal AI settings
-    FAL_MODEL = "fal-ai/flux-pro/kontext"
+    FAL_MODEL = os.getenv("AI_MODEL", "fal-ai/flux-pro/kontext")
     FAL_API_KEY = os.getenv("FAL_KEY")
     
     MODEL_VERSION = "latest"
