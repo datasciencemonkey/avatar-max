@@ -1,0 +1,35 @@
+command: ['streamlit', 'run', 'app.py']
+env:
+  # AI/Model Configuration
+  - name: 'AI_PROVIDER'
+    valueFrom: 'AI_PROVIDER'
+  - name: 'AI_MODEL'
+    valueFrom: 'AI_MODEL'
+  - name: 'REPLICATE_API_TOKEN'
+    valueFrom: 'REPLICATE_API_TOKEN'
+  - name: 'FAL_KEY'
+    valueFrom: 'FAL_KEY'
+  
+  # Databricks Configuration
+  - name: 'DATABRICKS_TOKEN'
+    valueFrom: 'DATABRICKS_TOKEN'
+  - name: 'DATABRICKS_HOST'
+    valueFrom: 'DATABRICKS_HOST'
+  - name: 'DATABRICKS_BASE_URL'
+    valueFrom: 'DATABRICKS_BASE_URL'
+  - name: 'DATABRICKS_MODEL'
+    valueFrom: 'DATABRICKS_MODEL'
+  - name: 'DATABRICKS_CLAUDE_ENDPOINT'
+    valueFrom: 'DATABRICKS_CLAUDE_ENDPOINT'
+  - name: 'DATABRICKS_VOLUME'
+    valueFrom: 'DATABRICKS_VOLUME'
+  - name: 'GCP_KEY'
+    valueFrom: 'GCP_KEY'
+  
+  
+  # Database Configuration
+  - name: 'DATABASE_URL'
+    valueFrom: 'DATABASE_URL'
+  
+
+

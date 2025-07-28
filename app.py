@@ -539,28 +539,7 @@ def main():
     # Load CSS
     load_css()
     
-    # Add Databricks logo in top right
-    # Read and encode the logo image
-    try:
-        with open("assets/Databricks-Logo.png", "rb") as f:
-            logo_data = f.read()
-        import base64
-        logo_base64 = base64.b64encode(logo_data).decode()
-        
-        st.markdown(
-            f"""<a href="https://www.databricks.com" target="_blank" class="databricks-logo-link">
-                <img src="data:image/png;base64,{logo_base64}" class="databricks-logo" alt="Databricks">
-            </a>""",
-            unsafe_allow_html=True
-        )
-    except:
-        # Fallback to text if logo not found
-        st.markdown(
-            """<a href="https://www.databricks.com" target="_blank" class="databricks-text">
-                Databricks
-            </a>""",
-            unsafe_allow_html=True
-        )
+    # Top right area intentionally left blank
     
     # Initialize session state
     init_session_state()

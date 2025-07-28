@@ -260,48 +260,5 @@ div[class*="deploy"] {
 }
 
 
-/* Databricks logo positioning */
-.databricks-logo-link {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    display: block;
-    transition: transform 0.3s ease;
-}
-
-.databricks-logo {
-    height: 35px;
-    width: auto;
-    display: block;
-}
-
-.databricks-logo-link:hover {
-    transform: scale(1.05);
-    text-decoration: none;
-}
-
-/* Databricks text fallback */
-.databricks-text {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    font-size: 24px;
-    font-weight: bold;
-    color: #FF3621;
-    background: white;
-    padding: 8px 16px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    display: block;
-    text-decoration: none;
-    transition: transform 0.3s ease;
-}
-
-.databricks-text:hover {
-    transform: scale(1.05);
-    color: #FF3621;
-    text-decoration: none;
-}
+/* Top right area intentionally left blank - Databricks branding removed */
 

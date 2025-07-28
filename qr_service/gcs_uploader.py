@@ -32,8 +32,7 @@ def upload_to_gcs(image_path_or_pil: Union[str, Image.Image],
             raise ValueError("image_path_or_pil cannot be None or empty")
         
         # Get Databricks credentials
-        wc = WorkspaceClient()
-        gcp_credentials_json = wc.dbutils.secrets.get(scope="sgscope", key="gcp_key")
+        gcp_credentials_json = os.getenv("GCP_KEY")
         
         # Parse JSON credentials and initialize GCS client
         gcp_credentials = json.loads(gcp_credentials_json)
