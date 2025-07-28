@@ -93,10 +93,10 @@ class AppConfig:
     # Check if we're in Databricks environment
     # In Databricks, volumes are always accessible at /Volumes/
     IS_DATABRICKS = (
-        os.path.exists("/Volumes/")
-        or os.getenv("DATABRICKS_RUNTIME_VERSION") is not None
+        os.getenv("DATABRICKS_RUNTIME_VERSION") is not None
+        or (os.path.exists("/Volumes/") and os.path.exists(DATABRICKS_VOLUME))
     )
-    USE_DATABRICKS_VOLUME = IS_DATABRICKS or os.path.exists(DATABRICKS_VOLUME)
+    USE_DATABRICKS_VOLUME = IS_DATABRICKS and os.path.exists(DATABRICKS_VOLUME)
 
     if USE_DATABRICKS_VOLUME:
         DATA_DIR = Path(DATABRICKS_VOLUME)

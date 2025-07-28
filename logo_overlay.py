@@ -33,10 +33,16 @@ def add_logo_to_image(
         if logo_path is None:
             logo_path = AppConfig.ASSETS_DIR / "carmax_logo.png"
             
-        # Load logo
+        # Load logo with fallback
         if not logo_path.exists():
-            print(f"Warning: Logo not found at {logo_path}")
-            return image
+            # Try fallback to local assets if volume path doesn't work
+            fallback_path = Path("assets") / logo_path.name
+            if fallback_path.exists():
+                print(f"Warning: Logo not found at {logo_path}, using fallback: {fallback_path}")
+                logo_path = fallback_path
+            else:
+                print(f"Warning: Logo not found at {logo_path} or {fallback_path}")
+                return image
             
         logo = Image.open(logo_path)
         
