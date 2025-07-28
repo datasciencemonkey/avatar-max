@@ -3,11 +3,12 @@
 from PIL import Image, ImageDraw
 from pathlib import Path
 from typing import Optional, Tuple
+from config import AppConfig
 
 
 def add_logo_to_image(
     image: Image.Image,
-    logo_path: Path = Path("assets/carmax_logo.png"),
+    logo_path: Path = None,
     position: str = "bottom-right",
     size_ratio: float = 0.15,
     padding: int = 20,
@@ -28,6 +29,10 @@ def add_logo_to_image(
         Image with logo overlay
     """
     try:
+        # Use default CarMax logo if no path specified
+        if logo_path is None:
+            logo_path = AppConfig.ASSETS_DIR / "carmax_logo.png"
+            
         # Load logo
         if not logo_path.exists():
             print(f"Warning: Logo not found at {logo_path}")

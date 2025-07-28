@@ -105,6 +105,14 @@ class AppConfig:
 
     AVATARS_DIR = DATA_DIR / "avatars"
     ORIGINALS_DIR = DATA_DIR / "originals"
+    
+    # Static Assets Path
+    # When using Databricks volumes, assets are stored in the volume
+    # Otherwise, use local assets folder
+    if USE_DATABRICKS_VOLUME:
+        ASSETS_DIR = Path(DATABRICKS_VOLUME)
+    else:
+        ASSETS_DIR = Path("assets")
 
     # Session Settings
     SESSION_TIMEOUT_MINUTES = 30

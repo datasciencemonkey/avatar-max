@@ -12,7 +12,6 @@ from PIL import Image
 from config import AppConfig
 from utils import process_uploaded_image
 from databricks_claude import get_claude_commentary
-from fal_service import FalImageGenerator
 from logo_overlay import add_logo_to_image
 
 
@@ -130,6 +129,8 @@ class ImageGenerator:
             prompt = AppConfig.get_prompt(superhero, color, car)
             
             # Use provider-specific generation
+            generated_image = None
+            
             if self.provider == "fal":
                 # Fal has its own generate_avatar method
                 generated_image, gen_time, error = self.generator.generate_avatar(
@@ -168,6 +169,8 @@ class ImageGenerator:
                 else:
                     return None, 0, "Failed to generate image after multiple attempts"
             
+            # Now apply post-processing to the generated image from either provider
+            
             # Get Claude commentary and quality score
             claude_score = None
             commentary = None
@@ -199,8 +202,7 @@ class ImageGenerator:
             
             # Add Databricks logo overlay
             try:
-                from pathlib import Path
-                databricks_logo_path = Path("assets/Databricks-Logo.png")
+                databricks_logo_path = AppConfig.ASSETS_DIR / "Databricks-Logo.png"
                 generated_image = add_logo_to_image(
                     generated_image,
                     logo_path=databricks_logo_path,
@@ -215,7 +217,7 @@ class ImageGenerator:
             
             # Add Innovation Garage logo overlay
             try:
-                innovation_garage_logo_path = Path("assets/innovation_garage.png")
+                innovation_garage_logo_path = AppConfig.ASSETS_DIR / "innovation_garage.png"
                 generated_image = add_logo_to_image(
                     generated_image,
                     logo_path=innovation_garage_logo_path,

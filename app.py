@@ -40,7 +40,7 @@ st.set_page_config(
 # Load custom CSS
 def load_css():
     """Load custom CSS styling."""
-    css_path = Path("assets/styles.css")
+    css_path = AppConfig.ASSETS_DIR / "styles.css"
     if css_path.exists():
         with open(css_path) as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
