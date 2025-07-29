@@ -97,6 +97,14 @@ class AppConfig:
         or (os.path.exists("/Volumes/") and os.path.exists(DATABRICKS_VOLUME))
     )
     USE_DATABRICKS_VOLUME = IS_DATABRICKS and os.path.exists(DATABRICKS_VOLUME)
+    
+    # Debug logging
+    print(f"DEBUG Config - DATABRICKS_RUNTIME_VERSION: {os.getenv('DATABRICKS_RUNTIME_VERSION')}")
+    print(f"DEBUG Config - /Volumes/ exists: {os.path.exists('/Volumes/')}")
+    print(f"DEBUG Config - DATABRICKS_VOLUME: {DATABRICKS_VOLUME}")
+    print(f"DEBUG Config - DATABRICKS_VOLUME exists: {os.path.exists(DATABRICKS_VOLUME)}")
+    print(f"DEBUG Config - IS_DATABRICKS: {IS_DATABRICKS}")
+    print(f"DEBUG Config - USE_DATABRICKS_VOLUME: {USE_DATABRICKS_VOLUME}")
 
     if USE_DATABRICKS_VOLUME:
         DATA_DIR = Path(DATABRICKS_VOLUME)

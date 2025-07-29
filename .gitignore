@@ -22,6 +22,11 @@ data/originals/
 *.jpg
 *.jpeg
 
+# Allow assets (logos, etc.)
+!assets/*.png
+!assets/*.jpg
+!assets/*.jpeg
+
 # Participant data
 data/*.csv
 data/*.json

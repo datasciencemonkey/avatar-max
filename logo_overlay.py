@@ -33,16 +33,40 @@ def add_logo_to_image(
         if logo_path is None:
             logo_path = AppConfig.ASSETS_DIR / "carmax_logo.png"
             
-        # Load logo with fallback
-        if not logo_path.exists():
-            # Try fallback to local assets if volume path doesn't work
-            fallback_path = Path("assets") / logo_path.name
-            if fallback_path.exists():
-                print(f"Warning: Logo not found at {logo_path}, using fallback: {fallback_path}")
-                logo_path = fallback_path
+        # Load logo with comprehensive fallback strategy
+        print(f"Attempting to load logo from: {logo_path}")
+        
+        # List of paths to try in order
+        paths_to_try = [
+            logo_path,  # Primary path (volume or configured path)
+            Path("assets") / logo_path.name,  # Local assets folder
+            Path(__file__).parent / "assets" / logo_path.name,  # Assets relative to this file
+            Path.cwd() / "assets" / logo_path.name,  # Assets from current working directory
+        ]
+        
+        logo_found = False
+        for i, path_to_try in enumerate(paths_to_try):
+            print(f"  Trying path {i+1}: {path_to_try}")
+            if path_to_try.exists():
+                print(f"  ✓ Found logo at: {path_to_try}")
+                logo_path = path_to_try
+                logo_found = True
+                break
             else:
-                print(f"Warning: Logo not found at {logo_path} or {fallback_path}")
-                return image
+                print(f"  ✗ Not found at: {path_to_try}")
+        
+        if not logo_found:
+            print(f"Logo '{logo_path.name}' not found in any of the attempted paths")
+            print(f"Current working directory: {Path.cwd()}")
+            print(f"Script directory: {Path(__file__).parent}")
+            print(f"Available files in current directory:")
+            try:
+                for file in Path.cwd().iterdir():
+                    if file.is_file():
+                        print(f"  - {file.name}")
+            except Exception as e:
+                print(f"  - Error listing current directory: {e}")
+            return image
             
         logo = Image.open(logo_path)
         
