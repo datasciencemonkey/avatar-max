@@ -34,8 +34,6 @@ def add_logo_to_image(
             logo_path = AppConfig.ASSETS_DIR / "carmax_logo.png"
             
         # Load logo with comprehensive fallback strategy
-        print(f"Attempting to load logo from: {logo_path}")
-        
         # List of paths to try in order
         paths_to_try = [
             logo_path,  # Primary path (volume or configured path)
@@ -45,27 +43,16 @@ def add_logo_to_image(
         ]
         
         logo_found = False
-        for i, path_to_try in enumerate(paths_to_try):
-            print(f"  Trying path {i+1}: {path_to_try}")
+        for path_to_try in paths_to_try:
             if path_to_try.exists():
-                print(f"  ✓ Found logo at: {path_to_try}")
+                if path_to_try != logo_path:
+                    print(f"Using fallback logo path: {path_to_try}")
                 logo_path = path_to_try
                 logo_found = True
                 break
-            else:
-                print(f"  ✗ Not found at: {path_to_try}")
         
         if not logo_found:
-            print(f"Logo '{logo_path.name}' not found in any of the attempted paths")
-            print(f"Current working directory: {Path.cwd()}")
-            print(f"Script directory: {Path(__file__).parent}")
-            print(f"Available files in current directory:")
-            try:
-                for file in Path.cwd().iterdir():
-                    if file.is_file():
-                        print(f"  - {file.name}")
-            except Exception as e:
-                print(f"  - Error listing current directory: {e}")
+            print(f"Warning: Logo '{logo_path.name}' not found in any of the attempted paths")
             return image
             
         logo = Image.open(logo_path)
