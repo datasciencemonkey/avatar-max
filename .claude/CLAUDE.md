@@ -2,95 +2,189 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Workflow Practices
-- Always start feature requests by creating a Github issue as datasciencemonkey@gmail.com.
-
-## Project Overview
-
-Superhero Avatar Generator - A Streamlit web application that transforms user photos into personalized superhero avatars using AI image generation services (Fal AI or Replicate).
-
 ## Development Commands
 
+### Package Management (uses uv, not pip)
 ```bash
-# Install dependencies
+# Install all dependencies
 uv sync
 
-# Run the application
-uv run streamlit run app.py
+# Add new dependency
+uv add package-name
 
-# Run tests
-uv run pytest
+# Add dev dependency  
+uv add --dev package-name
 
-# Run a specific test file
-uv run pytest tests/test_utils.py
-
-# Add new dependencies
-uv add package_name
-
-# Add development dependencies
-uv add --group dev package_name
+# Install specific packages
+uv add google-cloud-storage "qrcode[pil]"
 ```
 
-## High-Level Architecture
+### Running the Application
+```bash
+# Run the Streamlit app
+streamlit run app.py
+
+# Run with specific port
+streamlit run app.py --server.port 8502
+```
+
+### Testing
+```bash
+# Run all tests
+python -m pytest
+
+# Run specific test file
+python -m pytest tests/test_image_generator.py
+
+# Run with verbose output
+python -m pytest -v
+
+# Test specific AI model (requires API keys)
+python tests/test_fal_model.py
+python tests/test_prunaai_model.py
+```
+
+### Manual Testing
+```bash
+# Test email functionality
+python manual_tests/test_email.py
+
+# Test Databricks integration
+python manual_tests/test_databricks.py
+
+# Test logo overlay functionality
+python manual_tests/test_logo_overlay.py
+```
+
+## Architecture Overview
 
 ### Core Application Flow
-1. **app.py** - Main Streamlit application implementing a 5-step wizard:
-   - Step 1: Personal info collection (name, email)
-   - Step 2: Preferences (superhero, car, color)
-   - Step 3: Photo capture/upload
-   - Step 4: AI generation
-   - Step 5: Result display and download
-
-### Key Modules
-- **config.py** - Central configuration for AI providers, superhero options, storage settings
-- **image_generator.py** - Orchestrates AI image generation (supports Fal and Replicate)
-- **database.py** - PostgreSQL integration via SQLAlchemy for tracking generation requests
-- **utils.py** - Validation, image processing, session management utilities
-- **fal_service.py** - Fal AI integration (FLUX Kontext Pro model)
-- **databricks_claude.py** - Quality scoring using Databricks-hosted Claude
+The application follows a 5-step wizard pattern:
+1. **Personal Info**: Name/email collection with validation
+2. **Preferences**: Superhero, car, color selection  
+3. **Photo Capture**: Camera or file upload
+4. **Generation**: AI model processing with progress tracking
+5. **Results**: Display with download/QR options
 
 ### AI Provider Architecture
-The application supports two AI providers with a unified interface:
-- **Fal AI** (preferred): Direct integration via fal-client
-- **Replicate**: Fallback option via replicate API
+The app implements a **provider abstraction layer** supporting multiple AI services:
 
-Provider selection is controlled by `AI_PROVIDER` environment variable.
+- **Primary**: Fal AI with FLUX Kontext Pro model
+- **Fallback**: Replicate with FLUX Kontext Pro model  
+- **Configuration**: Environment-driven provider selection via `AppConfig.AI_PROVIDER`
+
+Key architectural pattern: Each provider implements the same interface but handles image input differently (Fal uses PIL objects, Replicate uses base64 strings).
 
 ### Storage Architecture
-Dual storage support:
-- **Local**: Files stored in `data/originals/` and `data/avatars/`
-- **Databricks Volumes**: When `USE_DATABRICKS_VOLUME=true`, stores in Unity Catalog volumes
+**Hybrid storage system** with automatic environment detection:
 
-### Database Schema
-PostgreSQL database tracks:
-- Avatar generation requests
-- User information
-- Generated image paths
-- Quality scores
-- Timestamps
+- **Databricks Environment**: Uses Unity Catalog volumes (`/Volumes/...`)
+- **Local Development**: Uses local filesystem (`./outputs/...`)
+- **Detection Logic**: Checks for `/Volumes` directory existence
 
-## Environment Variables
+### Database Integration
+- **Primary**: PostgreSQL with SQLAlchemy ORM
+- **Graceful Degradation**: Application continues if database unavailable
+- **Connection**: Uses `DB_CONNECTION_STRING` environment variable
+- **Management**: Custom `db_manager` handles request lifecycle tracking
 
-Key environment variables to configure:
-- `REPLICATE_API_TOKEN` - For Replicate API access
-- `FAL_KEY` - For Fal AI access
-- `AI_PROVIDER` - Choose 'fal' or 'replicate'
-- `USE_DATABRICKS_VOLUME` - Enable Databricks storage
-- `DATABRICKS_HOST` / `DATABRICKS_TOKEN` - For Databricks integration
-- `POSTGRES_*` - Database connection settings
+### Quality Assessment Pipeline
+**Databricks-hosted Claude integration**:
+- Model: `databricks-meta-llama-3-1-405b-instruct` 
+- Endpoint: `/serving-endpoints/databricks-meta-llama-3-1-405b-instruct`
+- Function: Provides style scores (0-1) and commentary for generated avatars
+- Architecture: Score/commentary attached as attributes to PIL Image objects
 
-## Testing Approach
+### Email Service Architecture
+**Queue-based email delivery system**:
+- **Templates**: Jinja2-based HTML/text email templates in `email_templates/`
+- **SMTP**: Brevo (Sendinblue) service integration
+- **Processing**: Databricks scheduled jobs for batch email delivery
+- **Queue**: Database-stored email requests with retry logic
 
-Tests are located in the `tests/` directory and use pytest. Key test files:
-- `test_utils.py` - Validation and utility function tests
-- `test_image_generator.py` - AI generation logic tests
-- `test_app.py` - Streamlit application flow tests
-- `test_fal_integration.py` - Fal AI integration tests
+### Logo Overlay System
+**Multi-brand asset management**:
+- **Assets**: CarMax, Databricks, Innovation Garage logos in `assets/`
+- **Positioning**: Configurable corner placement with opacity control
+- **Format**: PNG with transparency support, automatic resizing
 
-## Important Considerations
+### QR Code Integration
+**Google Cloud Storage workflow**:
+- **Upload**: Generated avatars to `innovation_garage01` bucket
+- **Access**: Public URLs with unique UUIDs
+- **QR Generation**: High error correction QR codes linking to GCS URLs
+- **Display**: In-app QR code display with direct link sharing
 
-1. **AI Model**: Uses FLUX Kontext Pro model for high-quality superhero transformations
-2. **Image Processing**: All uploaded images are preprocessed to ensure compatibility
-3. **Session State**: Streamlit session state manages multi-step wizard flow
-4. **Error Handling**: Comprehensive validation at each step with user-friendly error messages
-5. **Production Features**: Includes database persistence, quality scoring, and enterprise storage options
+## Key Configuration
+
+### Environment Variables Required
+```bash
+# AI Service Configuration
+FAL_API_KEY=your_fal_key
+REPLICATE_API_TOKEN=your_replicate_token
+
+# Database (optional)
+DB_CONNECTION_STRING=postgresql://user:pass@host:port/db
+
+# Email Service (optional)
+BREVO_API_KEY=your_brevo_key
+BREVO_SENDER_EMAIL=sender@domain.com
+BREVO_SENDER_NAME="Event Team"
+
+# Databricks (for enterprise features)
+DATABRICKS_HOST=your_workspace_url
+DATABRICKS_TOKEN=your_pat_token
+```
+
+### Configuration Patterns
+- **Central Config**: `config.py` with `AppConfig` class manages all settings
+- **Environment Detection**: Automatic Databricks vs local environment detection
+- **Feature Flags**: Email capture, download functionality can be toggled
+- **Provider Selection**: AI service provider configurable via environment
+
+## Project Structure Patterns
+
+### Modular Service Architecture
+- `image_generator.py`: Core AI provider abstraction and image processing
+- `database.py`: Database operations with graceful fallback
+- `email_service/`: Complete email delivery system with templates and queue
+- `qr_service/`: GCS upload and QR code generation
+- `utils.py`: Validation, file operations, session management
+
+### Testing Strategy
+- **Unit Tests**: Individual component testing in `tests/`
+- **Integration Tests**: Full workflow testing with mock services
+- **Manual Tests**: Real API testing utilities in `manual_tests/`
+- **Model-Specific Tests**: Separate test files for each AI provider
+
+### Asset Management
+- **Static Assets**: Logos, CSS, images in `assets/`
+- **Templates**: Email templates with Jinja2 inheritance
+- **Output Directories**: Auto-created `outputs/` structure for local development
+
+## Development Notes
+
+### Session State Management
+Streamlit session state is extensively used for wizard flow management. Key session variables:
+- `step`: Current wizard step (1-5)
+- `form_data`: User input across all steps
+- `generated_avatar`: PIL Image with attached quality metrics
+- `request_id`: Database tracking ID
+
+### Image Processing Pipeline
+1. **Input Standardization**: PIL Image conversion and validation
+2. **AI Generation**: Provider-specific API calls with retry logic
+3. **Quality Assessment**: Databricks Claude scoring
+4. **Logo Overlay**: Multi-brand asset composition
+5. **Format Optimization**: PNG output with metadata preservation
+
+### Error Handling Patterns
+- **Graceful Degradation**: App continues with reduced functionality if services unavailable
+- **User-Friendly Messages**: Technical errors translated to user-friendly feedback
+- **Logging**: Comprehensive error logging without exposing sensitive information
+- **Retry Logic**: Built-in retry mechanisms for transient failures
+
+## Development Workflow
+
+### Git Workflow
+- **Always commit as me**: Ensure proper commit attribution

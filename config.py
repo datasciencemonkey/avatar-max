@@ -78,7 +78,7 @@ class AppConfig:
     }
 
     # Prompt Template
-    PROMPT_TEMPLATE = """move the person to a showroom garage, dressed like {superhero}, retain facial features. Show a {color} {car} in the background. Let them raise their thumbs up. Make it 90s cartoon style or anime style. family friendly."""
+    PROMPT_TEMPLATE = """Move the person into a showroom garage, dressed as a {superhero}, preserving the original facial features, hairstyle, expression, and pose. Place a {color} {car} in the background behind them. Have them raise both thumbs‑up. Render in a clean, family‑friendly 1990s cartoon style, with their face extremely similar to the original photo but cartoon‑like."""
 
     # Event Configuration
     EVENT_NAME = os.getenv("EVENT_NAME", "Databricks @ Innovation Garage 2025")

@@ -60,7 +60,7 @@ class FalImageGenerator:
                 "seed": seed if seed != -1 else None,
                 "image_size": "square",
                 "num_inference_steps": 28,
-                "guidance_scale": 3.5,
+                "guidance_scale": 10,
                 "enable_safety_checker": True,
                 "safety_tolerance": 2
             }
