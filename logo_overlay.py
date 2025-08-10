@@ -31,7 +31,7 @@ def add_logo_to_image(
     try:
         # Use default CarMax logo if no path specified
         if logo_path is None:
-            logo_path = AppConfig.ASSETS_DIR / "carmax_logo.png"
+            logo_path = AppConfig.ASSETS_DIR / "avatar_on_databricks.png"
             
         # Load logo with comprehensive fallback strategy
         # List of paths to try in order

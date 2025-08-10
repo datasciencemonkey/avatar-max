@@ -10,7 +10,7 @@ def prepare_carmax_logo():
     """
     Instructions for preparing the CarMax logo.
     """
-    logo_path = AppConfig.ASSETS_DIR / "carmax_logo.png"
+    logo_path = AppConfig.ASSETS_DIR / "avatar_on_databricks.png"
     
     print("=" * 60)
     print("CarMax Logo Setup Instructions")
@@ -38,7 +38,7 @@ def prepare_carmax_logo():
     else:
         print(f"❌ Logo not found at: {logo_path}")
         print("\nTo add the CarMax logo:")
-        print(f"1. Save the CarMax logo image as: {AppConfig.ASSETS_DIR / 'carmax_logo.png'}")
+        print(f"1. Save the CarMax logo image as: {AppConfig.ASSETS_DIR / 'avatar_on_databricks.png'}")
         print("2. Preferably use a PNG with transparent background")
         print("3. Recommended size: at least 400px wide")
         print("\nCreating a placeholder logo for testing...")
@@ -49,7 +49,7 @@ def prepare_carmax_logo():
     print("- Format: PNG (preferred) or JPEG")
     print("- Background: Transparent (preferred) or white")
     print("- Size: At least 400px wide for good quality")
-    print(f"- Location: {AppConfig.ASSETS_DIR / 'carmax_logo.png'}")
+    print(f"- Location: {AppConfig.ASSETS_DIR / 'avatar_on_databricks.png'}")
     print("=" * 60)
 
 

@@ -114,7 +114,7 @@ superhero-max/
 ├── assets/               
 │   ├── styles.css         # Custom CSS styling
 │   ├── Databricks-Logo.png
-│   └── carmax_logo.png
+│   └── avatar_on_databricks.png
 ├── data/                  # Generated content storage
 │   ├── avatars/          # Generated superhero avatars
 │   └── originals/        # User uploaded photos
